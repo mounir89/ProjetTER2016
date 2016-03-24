@@ -10,5 +10,13 @@ package packageExceptions;
  * @author proprietaire
  */
 public class Exception_AbsenceValeur extends Exception{
+
+    public Exception_AbsenceValeur(String message) {
+        super("Des valeurs nécessaires au calcul sont indéfinies ("+message+"). L'exécution du programme a été interrompue.");
+    }
     
+    public String getExceptionMessage()
+    {
+        return "Des valeurs nécessaires au calcul sont indéfinies. L'exécution du programme a été interrompue.";
+    }
 }

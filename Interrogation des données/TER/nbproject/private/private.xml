@@ -5,14 +5,21 @@
         <group>
             <file>file:/C:/Users/proprietaire/Documents/NetBeansProjects/TER/src/ter/InterrogationDataRDF.java</file>
             <file>file:/C:/Users/proprietaire/Documents/NetBeansProjects/TER/src/ter/OperationJSON.java</file>
+            <file>file:/C:/Users/proprietaire/Documents/NetBeansProjects/TER/src/ter/TestEndPoint.java</file>
             <file>file:/C:/Users/proprietaire/Documents/NetBeansProjects/TER/src/ter/InterrogationBDD.java</file>
             <file>file:/C:/Users/proprietaire/Documents/NetBeansProjects/TER/src/ter/InterrogationOntologie.java</file>
+            <file>file:/C:/Users/proprietaire/Documents/NetBeansProjects/TER/src/packageExceptions/Exception_ParseException.java</file>
+            <file>file:/C:/Users/proprietaire/Documents/NetBeansProjects/TER/src/packageLogger/LoggerException.java</file>
             <file>file:/C:/Users/proprietaire/Documents/NetBeansProjects/TER/src/ter/TER.java</file>
             <file>file:/C:/Users/proprietaire/Documents/NetBeansProjects/TER/src/ter/Object_VecteurCalcul.java</file>
+            <file>file:/C:/Users/proprietaire/Documents/NetBeansProjects/TER/src/packageLogger/Principal.java</file>
             <file>file:/C:/Users/proprietaire/Documents/NetBeansProjects/TER/src/ter/Interrogation.java</file>
             <file>file:/C:/Users/proprietaire/Documents/NetBeansProjects/TER/src/ter/Object_TIEG.java</file>
-            <file>file:/C:/Users/proprietaire/Documents/NetBeansProjects/TER/src/packageExceptions/Exception_AbsenceDocumentBiomass.java</file>
+            <file>file:/C:/Users/proprietaire/Documents/NetBeansProjects/TER/src/packageExceptions/Exception_FichierCalcule.java</file>
             <file>file:/C:/Users/proprietaire/Documents/NetBeansProjects/TER/src/packageExceptions/Exception_AbsenceValeur.java</file>
+            <file>file:/C:/Users/proprietaire/Documents/NetBeansProjects/TER/src/ter/AdaptationDonnees.java</file>
+            <file>file:/C:/Users/proprietaire/Documents/NetBeansProjects/TER/src/packageExceptions/Exception_AbsenceDocument.java</file>
+            <file>file:/C:/Users/proprietaire/Documents/NetBeansProjects/TER/src/packageExceptions/Exception_BDDException.java</file>
             <file>file:/C:/Users/proprietaire/Documents/NetBeansProjects/TER/src/ter/ConnexionDB.java</file>
             <file>file:/C:/Users/proprietaire/Documents/NetBeansProjects/TER/src/packageExceptions/Exception_AbsenceExperienceBiomass.java</file>
             <file>file:/C:/Users/proprietaire/Documents/NetBeansProjects/TER/src/ter/Object_ProcessDescription.java</file>

@@ -17,19 +17,19 @@ public class Object_VecteurCalcul {
     
     private String aExpN;
     
-    private String aSomme;
+    private double aSomme;
     
-    private String aBiomassQty;
+    private double aBiomassQty;
     
-    private float aGrMin;
+    private double aGrMin;
     
-    private float aGrMax;
+    private double aGrMax;
     
-    private float aGyMin;
+    private double aGyMin;
     
-    private float aGyMax;
+    private double aGyMax;
 
-    public Object_VecteurCalcul(String aTopic, String aIdDoc, String aExpN, String aSomme, String aBiomassQty, float aGrMin, float aGrMax, float aGyMin, float aGyMax) {
+    public Object_VecteurCalcul(String aTopic, String aIdDoc, String aExpN, double aSomme, double aBiomassQty, double aGrMin, double aGrMax, double aGyMin, double aGyMax) {
         
         this.aTopic = aTopic;
         this.aIdDoc = aIdDoc;
@@ -67,51 +67,51 @@ public class Object_VecteurCalcul {
         this.aExpN = aExpN;
     }
 
-    public String getaSomme() {
+    public double getaSomme() {
         return aSomme;
     }
 
-    public void setaSomme(String aSomme) {
+    public void setaSomme(double aSomme) {
         this.aSomme = aSomme;
     }
 
-    public String getaBiomassQty() {
+    public double getaBiomassQty() {
         return aBiomassQty;
     }
 
-    public void setaBiomassQty(String aBiomassQty) {
+    public void setaBiomassQty(double aBiomassQty) {
         this.aBiomassQty = aBiomassQty;
     }
 
-    public float getaGrMin() {
+    public double getaGrMin() {
         return aGrMin;
     }
 
-    public void setaGrMin(float aGrMin) {
+    public void setaGrMin(double aGrMin) {
         this.aGrMin = aGrMin;
     }
 
-    public float getaGrMax() {
+    public double getaGrMax() {
         return aGrMax;
     }
 
-    public void setaGrMax(float aGrMax) {
+    public void setaGrMax(double aGrMax) {
         this.aGrMax = aGrMax;
     }
 
-    public float getaGyMin() {
+    public double getaGyMin() {
         return aGyMin;
     }
 
-    public void setaGyMin(float aGyMin) {
+    public void setaGyMin(double aGyMin) {
         this.aGyMin = aGyMin;
     }
 
-    public float getaGyMax() {
+    public double getaGyMax() {
         return aGyMax;
     }
 
-    public void setaGyMax(float aGyMax) {
+    public void setaGyMax(double aGyMax) {
         this.aGyMax = aGyMax;
     }
      
