@@ -5,13 +5,17 @@
  */
 package ter;
 
+import au.com.bytecode.opencsv.CSVWriter;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import packageExceptions.Exception_AbsenceDocumentBiomass;
-import packageExceptions.Exception_AbsenceExperienceBiomass;
-import packageExceptions.Exception_AbsenceValeur;
+import java.util.List;
+import java.util.logging.Level;
+import packageExceptions.*;
+import packageLogger.LoggerException;
 
 /**
  *
@@ -37,14 +41,14 @@ class Interrogation {
     private static File vFichierCalcul; 
     
     
-    static File initMatriceCalcul(String v_PathFile, String v_biomass, HashMap<String, ArrayList<String>> v_TopicOperations, HashMap<String, ArrayList<String>> v_RelationParametres ) throws Exception_AbsenceDocumentBiomass, Exception_AbsenceExperienceBiomass
+    static File initMatriceCalcul(String v_PathFile, String v_biomass, HashMap<String, ArrayList<String>> v_TopicOperations, HashMap<String, ArrayList<String>> v_RelationParametres ) throws Exception_AbsenceDocument, Exception_AbsenceExperienceBiomass, Exception_FichierCalcule, Exception_ParseException, IOException, Exception_BDDException, Exception_AbsenceValeur, SQLException
     {
         
         vPathFile=v_PathFile; vBiomass=v_biomass; vTopicOperations=v_TopicOperations; vRelationParametres=v_RelationParametres;
         
         /*Interroger la BDD pour construire pour chaque Topic sa liste de documents*/
         
-        for (String topic : vTopicDocs.keySet())
+        for (String topic : vTopicOperations.keySet())
         {
             ArrayList<String> listDoc = InterrogationBDD.getTopicDocument(topic);
             
@@ -72,72 +76,101 @@ class Interrogation {
     }
     
     
-    static void recupererExperienceBiomass() throws packageExceptions.Exception_AbsenceDocumentBiomass
+    private static void recupererExperienceBiomass() throws Exception_AbsenceDocument, IOException
     {
         
        if(vTopicDocs!=null)
        {
-                for (String topic : vTopicDocs.keySet()) 
-                {
-                    ArrayList<String> listDoc = vTopicDocs.get(topic);
-
-                    for(String idDoc : listDoc)
-                    {
-                        ArrayList<Object_TIEG> listeObj = InterrogationDataRDF.getDocumentExperience(vBiomass,topic,idDoc);
-
-                        if(listeObj!=null)
-                        {
-                            vDocExp.addAll(listeObj);
-                        }
-                    }
-                }  
+           for (String topic : vTopicDocs.keySet())
+           {
+               ArrayList<String> listDoc = vTopicDocs.get(topic);
+               
+               for(String idDoc : listDoc)
+               {
+                   ArrayList<Object_TIEG> listeObj = InterrogationDataRDF.getDocumentExperience(vBiomass,topic,idDoc);
+                   
+                   if(listeObj!=null)
+                   {
+                       vDocExp.addAll(listeObj);
+                   }
+               }
+           }
+    
        }
        else
        {
-           throw new Exception_AbsenceDocumentBiomass();
+         
+           LoggerException.getLoggerException().log(Level.WARNING,null, new Exception_ParseException());
+
+           throw new Exception_AbsenceDocument();
+
        }
        
     }
     
-    static void construireMatriceCalcul() throws Exception_AbsenceExperienceBiomass
-    {
-        
+    private static void construireMatriceCalcul() throws Exception_AbsenceExperienceBiomass, Exception_ParseException, Exception_AbsenceValeur, IOException {
+
         /*Pour chaque objetc : Object_TIEG de vDocExp construire le vecteur d'entrée au calul*/
         /*Le vecteur résultant sera placé sur : vVecteurCalculGlobal*/
+        
       if(vDocExp!=null)
       {
-        for(Object_TIEG objTIEG : vDocExp)
-        {
-            vVecteurCalculGlobal.add(InterrogationDataRDF.getVecteurCalcul(objTIEG));
-        }
+              
+          for(Object_TIEG obj : vDocExp)
+          {
+             try {   
+               
+                 vVecteurCalculGlobal.add(InterrogationDataRDF.getVecteurCalcul(obj, vTopicOperations, vRelationParametres));
+                   
+              } catch (Exception_ParseException | Exception_AbsenceValeur ex) {
+               
+                      LoggerException.getLoggerException().log(Level.WARNING,null,ex);
+              }
+          }
+
       }
       else
       {
+          LoggerException.getLoggerException().log(Level.WARNING,null, new Exception_AbsenceExperienceBiomass());
+
           throw new Exception_AbsenceExperienceBiomass();
       }
         
     }
     
-    static void transformerMatriceCSV()
+    private static void transformerMatriceCSV() throws Exception_FichierCalcule, IOException
     {
-        
-        
+
         try {
             
-            if((vFichierCalcul=new File(vPathFile+"/CalculeR.csv")).exists())
-            {
-                vFichierCalcul.delete();
+                if((vFichierCalcul=new File(vPathFile+"/CalculeR.csv")).exists())
+                {
+                    vFichierCalcul.delete();
+                }
+
+                vFichierCalcul.createNewFile();
+            
+                try (CSVWriter writer = new CSVWriter(new FileWriter(vPathFile+"/CalculeR.csv"))) 
+                {
+                    List<String[]> data = new ArrayList<>();
+
+                    vVecteurCalculGlobal.stream().forEach((vector) -> {
+
+                        data.add(new String[]{vector.getaTopic(),vector.getaIdDoc(),vector.getaExpN(),Double.toString(vector.getaBiomassQty()),Double.toString(vector.getaSomme()),Double.toString(vector.getaGrMin()),Double.toString(vector.getaGrMax()),Double.toString(vector.getaGyMin()),Double.toString(vector.getaGyMax())});
+
+                    });
+
+                    writer.writeAll(data);
+                }
+                
+            } catch (IOException ex) {
+                
+                LoggerException.getLoggerException().log(Level.WARNING,null,new Exception_FichierCalcule());
+
+                throw new Exception_FichierCalcule();
             }
-            
-            vFichierCalcul.createNewFile();
         
-        } catch (IOException e) {
-            
-            e.printStackTrace(); /*Traitement à rajouter*/
-        }
         
     }
-    
-    
-    
+ 
 }

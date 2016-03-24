@@ -10,5 +10,13 @@ package packageExceptions;
  * @author proprietaire
  */
 public class Exception_AbsenceExperienceBiomass extends Exception{
-    
+
+    public Exception_AbsenceExperienceBiomass() {
+        super("Aucune expérience ne traite de la biomass sélectionnée.");
+    }
+
+    public String getExceptionMessage()
+    {
+        return "Aucune expérience ne traite de la biomass sélectionnée.";
+    }
 }

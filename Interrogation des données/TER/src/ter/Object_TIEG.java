@@ -21,10 +21,11 @@ public class Object_TIEG {
     
     private String aGrMax;
 
-    public Object_TIEG(String aTopic, String aIdDoc, String aGrMin, String aGrMax) {
+    public Object_TIEG(String aTopic, String aIdDoc, String aExpN, String aGrMin, String aGrMax) {
         
         this.aTopic = aTopic;
         this.aIdDoc = aIdDoc;
+        this.aExpN=aExpN;
         this.aGrMin = aGrMin;
         this.aGrMax = aGrMax;
     }
