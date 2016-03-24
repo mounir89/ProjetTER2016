@@ -5,6 +5,7 @@
  */
 package ter;
 
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -13,6 +14,9 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.logging.Level;
+import packageExceptions.Exception_BDDException;
+import packageLogger.LoggerException;
 
 /**
  *
@@ -20,58 +24,40 @@ import java.util.HashMap;
  */
 class InterrogationBDD {
     
-    static ArrayList<String> getTopicDocument(String topic)
+    static ArrayList<String> getTopicDocument(String topic) throws Exception_BDDException, SQLException
     {
 
         ArrayList<String> listeDoc = new ArrayList<>();
-        Connection conn = null;
-        PreparedStatement pst = null;
-        ResultSet result= null;
-        
-        try {
- 
-                conn = ConnexionDB.getConnection();
+        Connection conn;
+        PreparedStatement pst;
+        ResultSet result;
+
+        conn = ConnexionDB.getConnection();
          
-                    //Création d'un objet PrepareStatement
-                    pst = conn.prepareStatement("select d.id_documents"
+        //Création d'un objet PrepareStatement
+        pst = conn.prepareStatement("select d.id_documents"
                       + " from documents d, topics t, ontology o"
                       + " where o.id_ontology=t.id_ontology"
                       + " and t.id_topic=d.id_topic"
                       + " and o.name='BIOREFINERY'"
                       + " and t.name= ?"); 
                     
-                    //Edition du paramètre topic
-                    pst.setString(1, topic);
+        //Edition du paramètre topic
+        pst.setString(1, topic);
                     
-                    //L'objet ResultSet contient le résultat de la requête SQL
-                    result = pst.executeQuery();      
+        //L'objet ResultSet contient le résultat de la requête SQL
+        result = pst.executeQuery();      
                 
-                while(result.next()){
+        while(result.next()){
                     
-                    listeDoc.add(result.getString(1));
+            listeDoc.add(result.getString(1));
                     
-                }
-         
-            } catch (Exception e) {
-                e.printStackTrace();
-            }finally {
-
-            try {
-                if (pst != null) {
-                    pst.close();
-                }
-                if (result != null) {
-                    result.close();
-                }
-                if (conn != null) {
-                    conn.close();
-                }
-
-            } catch (SQLException ex) {
-                ex.printStackTrace();
-            }
         }
-            
+         
+        pst.close();
+
+        result.close();
+
         if(listeDoc.size()>0)
         {return listeDoc;}
             
@@ -79,13 +65,13 @@ class InterrogationBDD {
     }
 
 
-    static HashMap<String,ArrayList<String>> getTopicOperation()
+    static HashMap<String,ArrayList<String>> getTopicOperation() throws IOException, SQLException, Exception_BDDException
     {
 
         HashMap<String,ArrayList<String>> liste = new HashMap<>();
-        Connection conn = null;
-        Statement st = null;
-        ResultSet result= null;
+        Connection conn;
+        Statement st;
+        ResultSet result;
         
         String requete = "SELECT t.name, o.name_en" +
                           " FROM topics t, operations o, topicoperation r, ontology b" +
@@ -95,17 +81,17 @@ class InterrogationBDD {
                           " AND	UPPER(b.name)='BIOREFINERY'" +
                           " ORDER BY t.name, o.name_en";
         
-        try {
  
-                    conn = ConnexionDB.getConnection();
+        conn = ConnexionDB.getConnection();
          
-                    //Création d'un objet Statement
-                    st=conn.createStatement();
+        //Création d'un objet Statement
+        st=conn.createStatement();
 
-                    //L'objet ResultSet contient le résultat de la requête SQL
-                    result = st.executeQuery(requete);
+        //L'objet ResultSet contient le résultat de la requête SQL
+        result = st.executeQuery(requete);
                     
-                while(result.next()){
+        while(result.next())
+        {
               
                     if(liste.containsKey(result.getString(1)))
                     {
@@ -117,27 +103,13 @@ class InterrogationBDD {
                     {
                         liste.put(result.getString(1), new ArrayList<>(Arrays.asList(result.getString(2))));
                     }
-                }
-         
-            } catch (Exception e) {
-                e.printStackTrace();
-            }finally {
-
-            try {
-                 if (result != null) {
-                    result.close();
-                }
-                if (st != null) {
-                    st.close();
-                }
-                if (conn != null) {
-                    conn.close();
-                }
-
-            } catch (SQLException ex) {
-                ex.printStackTrace();
-            }
         }
+
+        st.close();
+
+        result.close();
+
+        conn.close();
             
         return liste;
     }

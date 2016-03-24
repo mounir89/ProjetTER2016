@@ -5,8 +5,12 @@
  */
 package ter;
 
+import java.io.IOException;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import packageExceptions.Exception_BDDException;
+import packageExceptions.Exception_SparqlConnexion;
 
 /**
  *
@@ -15,14 +19,14 @@ import java.util.HashMap;
 class Initialisation {
    
     
-    static HashMap<String,ArrayList<String>> initTopicOperation()
+    static HashMap<String,ArrayList<String>> initTopicOperation() throws Exception_BDDException, IOException, SQLException
     {
         
         return InterrogationBDD.getTopicOperation();
         
     }
     
-    static HashMap<String,ArrayList<String>> initRelationParameters()
+    static HashMap<String,ArrayList<String>> initRelationParameters() throws IOException, Exception_SparqlConnexion
     {
         return InterrogationOntologie.initRelationParameters();
     }

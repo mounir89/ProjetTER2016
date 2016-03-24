@@ -7,13 +7,11 @@ package ter;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import packageExceptions.Exception_BDDException;
+
 
 /**
  *
@@ -23,7 +21,7 @@ class ConnexionDB {
     
     private static Connection connection = null;
     
-    static Connection getConnection()
+    static Connection getConnection() throws Exception_BDDException
     {
         if(connection!=null)
         {
@@ -34,12 +32,10 @@ class ConnexionDB {
 			Class.forName("org.postgresql.Driver");
 
 		   } catch (ClassNotFoundException e) {
+                       
+                        //Logger.getLogger(Interrogation.class.getName()).log(Level.WARNING,null,new Exception_BDDException("Absence du driver pour se connecter à la base de donnéess."));
 
-			System.out.println("Where is your PostgreSQL JDBC Driver? "
-					+ "Include in your library path!");
-			e.printStackTrace();
-			
-                        return null;
+			throw new Exception_BDDException("Absence du driver pour se connecter à la base de donnéess.");
 
 		  }
 
@@ -50,17 +46,11 @@ class ConnexionDB {
 					"Admin123");
 
 		} catch (SQLException e) {
-
-			System.out.println("Connection Failed! Check output console");
-			
-                        e.printStackTrace();
-			
-                        return null;
+ 
+                    throw new Exception_BDDException("Impossible d'établir la connexion avec la base de données.");
 
 		}
-                
-                System.out.println("Connection established!");
-                
+                 
         }
 
         return connection;
