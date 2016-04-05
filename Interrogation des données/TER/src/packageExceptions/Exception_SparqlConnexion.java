@@ -18,9 +18,9 @@ public class Exception_SparqlConnexion extends Exception{
     public Exception_SparqlConnexion(Throwable cause) {
         super(cause);
     }
-    
-    
-    public String getExceptionMessage()
+
+    @Override
+    public String getMessage()
     {
         return "Une erreur de connexion avec le sparql endpoint. L'exécution du programme a été interrompue.";
     }

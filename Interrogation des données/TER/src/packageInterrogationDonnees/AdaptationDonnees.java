@@ -3,9 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package ter;
+package packageInterrogationDonnees;
 
-import java.text.ParseException;
+import java.math.BigDecimal;
 import java.util.HashMap;
 import packageExceptions.Exception_ParseException;
 
@@ -30,6 +30,13 @@ class AdaptationDonnees {
         
         return valeur_retour;
 
+    }
+    
+    static double doubleFractionPrecision(double expn, int fraction)
+    {
+       BigDecimal b = new BigDecimal(expn).setScale(fraction,BigDecimal.ROUND_HALF_UP);
+       
+       return b.doubleValue(); 
     }
     
     static double conversionUnite(String unite, String valeur) throws Exception_ParseException

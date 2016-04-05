@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package ter;
+package packageInterrogationDonnees;
 
 import au.com.bytecode.opencsv.CSVWriter;
 import java.io.File;
@@ -30,29 +30,35 @@ class Interrogation {
     
     private static HashMap<String, ArrayList<String>> vRelationParametres; /*Paramètre d'entrée communiqué par l'interface*/
     
-    private static HashMap<String, ArrayList<String>> vTopicDocs = null;
+    private static HashMap<String, ArrayList<String>> vTopicDocs= new HashMap<>();
     
-    private static ArrayList<Object_TIEG> vDocExp = null;
+    private static ArrayList<Object_TIEG> vDocExp=new ArrayList<>();
     
-    private static ArrayList<Object_VecteurCalcul> vVecteurCalculGlobal = null;
+    private static ArrayList<Object_VecteurCalcul> vVecteurCalculGlobal= new ArrayList<>();
     
     private static String vPathFile;
     
     private static File vFichierCalcul; 
     
     
-    static File initMatriceCalcul(String v_PathFile, String v_biomass, HashMap<String, ArrayList<String>> v_TopicOperations, HashMap<String, ArrayList<String>> v_RelationParametres ) throws Exception_AbsenceDocument, Exception_AbsenceExperienceBiomass, Exception_FichierCalcule, Exception_ParseException, IOException, Exception_BDDException, Exception_AbsenceValeur, SQLException
+                   
+    //LoggerException.getLoggerException().log(Level.WARNING,null,ex);
+    
+    static Object_RapportCalculMatrice initMatriceCalcul(String v_PathFile, String v_biomass, HashMap<String, ArrayList<String>> v_TopicOperations, HashMap<String, ArrayList<String>> v_RelationParametres ) throws Exception_AbsenceDocument, Exception_AbsenceExperienceBiomass, Exception_FichierCalcule, Exception_ParseException, IOException, Exception_BDDException, SQLException, Exception_SparqlConnexion
     {
         
         vPathFile=v_PathFile; vBiomass=v_biomass; vTopicOperations=v_TopicOperations; vRelationParametres=v_RelationParametres;
+        
+        Object_RapportCalculMatrice rapport = new Object_RapportCalculMatrice();
         
         /*Interroger la BDD pour construire pour chaque Topic sa liste de documents*/
         
         for (String topic : vTopicOperations.keySet())
         {
+            
             ArrayList<String> listDoc = InterrogationBDD.getTopicDocument(topic);
             
-            if(listDoc==null)
+            if(listDoc!=null)
             {
                 vTopicDocs.put(topic, listDoc);
             }
@@ -62,9 +68,9 @@ class Interrogation {
         
         recupererExperienceBiomass();
         
-        /*Construire la matrice de calcul*/
+        /*Construire la matrice de calcul et renvoyer les messages d'absence de valeurs*/
         
-        construireMatriceCalcul();
+        rapport.setMessage(construireMatriceCalcul());
         
         /*Transformer la matrice de calcul en fichier de sortie CSV exploitable avec R*/
         
@@ -72,13 +78,17 @@ class Interrogation {
         
         /*Retourner le fichier*/
         
-        return vFichierCalcul;
+        rapport.setFichierCalcule(vFichierCalcul);
+        
+        /*Renvoyer le rapport*/
+        
+        return rapport;
     }
     
     
-    private static void recupererExperienceBiomass() throws Exception_AbsenceDocument, IOException
+    private static void recupererExperienceBiomass() throws Exception_AbsenceDocument, IOException, Exception_SparqlConnexion
     {
-        
+         
        if(vTopicDocs!=null)
        {
            for (String topic : vTopicDocs.keySet())
@@ -108,34 +118,46 @@ class Interrogation {
        
     }
     
-    private static void construireMatriceCalcul() throws Exception_AbsenceExperienceBiomass, Exception_ParseException, Exception_AbsenceValeur, IOException {
+    private static ArrayList<String> construireMatriceCalcul() throws Exception_AbsenceExperienceBiomass, Exception_ParseException,IOException, Exception_SparqlConnexion {
 
         /*Pour chaque objetc : Object_TIEG de vDocExp construire le vecteur d'entrée au calul*/
         /*Le vecteur résultant sera placé sur : vVecteurCalculGlobal*/
-        
+        /*En cas de valeurs manquantes, le vecteur sera null, un message indiquant l'emplacement du manque ser transmis à la servlet*/
+      
+      Object_RapportCalculVecteur rapport;
+          
+      ArrayList<String> message= new ArrayList<>();
+      
       if(vDocExp!=null)
       {
               
           for(Object_TIEG obj : vDocExp)
           {
              try {   
-               
-                 vVecteurCalculGlobal.add(InterrogationDataRDF.getVecteurCalcul(obj, vTopicOperations, vRelationParametres));
+
+                 if((rapport=InterrogationDataRDF.getVecteurCalcul(obj, vTopicOperations, vRelationParametres)).getVecteurCalcul()!=null)
+                 {
+                    vVecteurCalculGlobal.add(rapport.getVecteurCalcul());
+                 }
+                 else
+                 {
+                    message.add(rapport.getMessage());
+                 }
                    
-              } catch (Exception_ParseException | Exception_AbsenceValeur ex) {
-               
-                      LoggerException.getLoggerException().log(Level.WARNING,null,ex);
+              } catch (Exception_ParseException ex) {
+     
+                      throw ex;
               }
           }
 
       }
       else
       {
-          LoggerException.getLoggerException().log(Level.WARNING,null, new Exception_AbsenceExperienceBiomass());
-
           throw new Exception_AbsenceExperienceBiomass();
       }
-        
+      
+      return message;
+      
     }
     
     private static void transformerMatriceCSV() throws Exception_FichierCalcule, IOException
@@ -153,10 +175,24 @@ class Interrogation {
                 try (CSVWriter writer = new CSVWriter(new FileWriter(vPathFile+"/CalculeR.csv"))) 
                 {
                     List<String[]> data = new ArrayList<>();
+                    
+                    //On ajoute le header
+                    
+                    data.add(new String[]{"TOPIC","IDDOCUMENT","EXPERIENCE_NUMBER",
+                                              "BIOMASS_QTY",
+                                              "QUANTITY_MATTER",
+                                              "GLUCOSE_RATE_MIN","GLUCOSE_RATE_MAX",
+                                              "GLUCOSE_YIELD_MIN","GLUCOSE_YIELD_MAX",
+                                              "RELIABILITY_MIN","RELIABILITY_MAX"});
 
                     vVecteurCalculGlobal.stream().forEach((vector) -> {
 
-                        data.add(new String[]{vector.getaTopic(),vector.getaIdDoc(),vector.getaExpN(),Double.toString(vector.getaBiomassQty()),Double.toString(vector.getaSomme()),Double.toString(vector.getaGrMin()),Double.toString(vector.getaGrMax()),Double.toString(vector.getaGyMin()),Double.toString(vector.getaGyMax())});
+                        data.add(new String[]{vector.getaTopic(),vector.getaIdDoc(),vector.getaExpN(),
+                                              Double.toString(vector.getaBiomassQty()),
+                                              Double.toString(AdaptationDonnees.doubleFractionPrecision(vector.getaSomme(),4)),
+                                              Double.toString(AdaptationDonnees.doubleFractionPrecision(vector.getaGrMin()/100,4)),Double.toString(AdaptationDonnees.doubleFractionPrecision(vector.getaGrMax()/100,4)), //On divise par 100 pour ramener le % en KG
+                                              Double.toString(AdaptationDonnees.doubleFractionPrecision(vector.getaGyMin()/100,4)),Double.toString(AdaptationDonnees.doubleFractionPrecision(vector.getaGyMax()/100,4)), //On divise par 100 pour ramener le % en KG
+                                              Double.toString(AdaptationDonnees.doubleFractionPrecision(vector.getaReliabilityMin()/5,2)),Double.toString(AdaptationDonnees.doubleFractionPrecision(vector.getaReliabilityMax()/5,2))}); //On divise la Reliability par 5 pour la normanliser sur une echelle de 0-->1
 
                     });
 
@@ -164,9 +200,7 @@ class Interrogation {
                 }
                 
             } catch (IOException ex) {
-                
-                LoggerException.getLoggerException().log(Level.WARNING,null,new Exception_FichierCalcule());
-
+ 
                 throw new Exception_FichierCalcule();
             }
         

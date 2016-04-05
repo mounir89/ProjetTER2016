@@ -15,7 +15,8 @@ public class Exception_FichierCalcule extends Exception{
         super("Une erreur de création du fichier de calcul. L'exécution du programme a été interrompue.");
     }
     
-    public String getExceptionMessage()
+    @Override
+    public String getMessage()
     {
         return "Une erreur de création du fichier de calcul. L'exécution du programme a été interrompue.";
     }

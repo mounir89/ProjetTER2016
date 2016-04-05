@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package ter;
+package packageInterrogationDonnees;
 
 import com.hp.hpl.jena.query.Query;
 import com.hp.hpl.jena.query.QueryExecution;
@@ -23,9 +23,60 @@ import packageLogger.LoggerException;
  * @author proprietaire
  */
 class InterrogationDataRDF {
-    
+   
     static String sparqlEndpoint = "http://pfl.grignon.inra.fr:3030/annotation/query";
     
+    static ArrayList<String> getBiomass() throws Exception_SparqlConnexion
+    {
+        ArrayList<String> resultat = new ArrayList<>();
+        
+        String comNameQuery=
+                "prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n" +
+                "prefix owl: <http://www.w3.org/2002/07/owl#>\n" +
+                "PREFIX onto: <http://opendata.inra.fr/resources/atWeb/annotation/>\n" +
+                "PREFIX domain: <http://opendata.inra.fr/resources/BIORAF#>\n" +
+                "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n" +
+                "PREFIX dc: <http://purl.org/dc/elements/1.1/>\n" +
+                "\n" +
+                "SELECT DISTINCT ?biomass\n" +
+                "WHERE {\n" +
+                "			?document onto:hasForID ?idDocument; a onto:Document.\n" +
+                "  	                ?document onto:hasTable ?table.\n" +
+                "  			?table dc:title ?tableTitle.\n" +
+                "       		FILTER regex(?tableTitle, \"Biomass\", \"i\" )\n" +
+                "	                ?table onto:hasForRow ?row.\n" +
+                "	                ?row onto:hasForCell ?cell_biomass. \n" +
+                "	                ?cell_biomass a domain:biomass.\n" +
+                "	                ?cell_biomass onto:hasForFS/onto:hasForElement/rdf:type ?biomassURI\n" +
+                "   			BIND(strafter(str(?biomassURI), \"#\") as ?biomass)\n" +
+                "}\n" +
+                "ORDER BY ASC(?biomass)";
+        
+        Query query = QueryFactory.create(comNameQuery);  
+        
+        QueryExecution qe = QueryExecutionFactory.sparqlService(sparqlEndpoint,query);
+
+        try {
+                ResultSet rs = qe.execSelect();
+                
+                while ( rs.hasNext() ) {
+                
+                QuerySolution solution=rs.next();
+                
+                resultat.add(solution.getLiteral("biomass").getLexicalForm()); 
+            }
+        } 
+        catch(Exception e){ 
+            
+           throw new packageExceptions.Exception_SparqlConnexion(e);
+    
+        }
+        finally {
+            qe.close();
+        }
+        
+        return resultat;
+    }
     /*
         prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
         prefix owl: <http://www.w3.org/2002/07/owl#>
@@ -56,7 +107,7 @@ class InterrogationDataRDF {
         }
         ORDER BY ASC(?idDocument) ASC(?experience_number)
     */
-    static ArrayList<Object_TIEG> getDocumentExperience(String vBiomass, String topic, String idDoc) throws IOException
+    static ArrayList<Object_TIEG> getDocumentExperience(String vBiomass, String topic, String idDoc) throws IOException, Exception_SparqlConnexion
     {
         ArrayList<Object_TIEG> resultat = new ArrayList<>();
         
@@ -107,7 +158,7 @@ class InterrogationDataRDF {
         } 
         catch(Exception e){ 
             
-           LoggerException.getLoggerException().log(Level.WARNING,null, e);
+           throw new packageExceptions.Exception_SparqlConnexion(e);
     
         }
         finally {
@@ -181,13 +232,19 @@ class InterrogationDataRDF {
     
     */
     
-    static Object_VecteurCalcul getVecteurCalcul(Object_TIEG objTIEG, HashMap<String, ArrayList<String>> vTopicOperations, HashMap<String, ArrayList<String>> vRelationParametres) throws Exception_ParseException,Exception_AbsenceValeur, IOException
+    static Object_RapportCalculVecteur getVecteurCalcul(Object_TIEG objTIEG, HashMap<String, ArrayList<String>> vTopicOperations, HashMap<String, ArrayList<String>> vRelationParametres) throws Exception_ParseException,IOException, Exception_SparqlConnexion
     {
-        String treatment,relation,biomass_quantity,biomass_unit,parametre,unit,value,gy_plus,gy_min;
+        String treatment,relation,biomass_quantity,biomass_unit,parametre,unit,value;
         
-        double somme=0; double gy_p=0; double gy_m=0;
+        String gy_min=null, gy_plus=null; 
+        
+        double somme=0; double gy_p=0; double gy_m=0; double reliability_min=0; double reliability_max=0;
+        
+        Object_RapportCalculVecteur rapport=new Object_RapportCalculVecteur();
         
         Object_VecteurCalcul vecteur=null;
+        
+        String message=null;
         
         String comNameQuery="prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n" +
         "    prefix owl: <http://www.w3.org/2002/07/owl#>\n" +
@@ -198,12 +255,15 @@ class InterrogationDataRDF {
         "    PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n" +
         "    PREFIX ont: <http://purl.org/net/ns/ontology-annot#>\n" +
         "\n" +
-        "    SELECT  Distinct ?treatment ?relation ?biomass_quantity ?biomass_unit ?parametre ?unit ?value ?gy_plus ?gy_min\n" +
+        "    SELECT  Distinct ?treatment ?relation ?biomass_quantity ?biomass_unit ?parametre ?unit ?value ?gy_plus ?gy_min ?reliability_min ?reliability_max\n" +
         "    WHERE {?document rdf:type onto:Document.\n" +
         "  	   ?document onto:hasForID ?idDocument.\n" +
         "          FILTER(str(?idDocument)=\""+objTIEG.getaIdDoc()+"\")\n" +
         "  	   ?document onto:hasForOntology ?ontology.\n" +
         " 	   Filter(str(?ontology)=\"http://opendata.inra.fr/resources/BIORAF#\")\n" +
+        "\n" +
+        "          ?document onto:hasForMinReliability ?reliability_min."+
+        "          ?document onto:hasForMaxReliability ?reliability_max."+
         "\n" +
         "  	   ?document onto:hasTable ?table.\n" +
         "          ?table dc:title ?tableTitle.\n" +
@@ -269,8 +329,20 @@ class InterrogationDataRDF {
                 parametre=solution.getLiteral("parametre").getLexicalForm();
                 unit=solution.getLiteral("unit").getLexicalForm();
                 value=solution.getLiteral("value").getLexicalForm();
-                gy_plus=solution.getLiteral("gy_plus").getLexicalForm();
-                gy_min=solution.getLiteral("gy_min").getLexicalForm();
+                
+                if(solution.getLiteral("gy_min")!=null)
+                {
+                    gy_min=solution.getLiteral("gy_min").getLexicalForm();
+                }
+                
+                if(solution.getLiteral("gy_plus")!=null)
+                {
+                    gy_plus=solution.getLiteral("gy_plus").getLexicalForm();
+                }
+                
+                reliability_min=Double.parseDouble(solution.getLiteral("reliability_min").getLexicalForm());
+                reliability_max=Double.parseDouble(solution.getLiteral("reliability_max").getLexicalForm());
+                
                 
                 /*Vérifier que le traitement a été choisi dans la définition du Topic*/
                 if(vTopicOperations.get(objTIEG.getaTopic()).contains(treatment))
@@ -279,11 +351,24 @@ class InterrogationDataRDF {
                     /*Vérifier que la relation et le paramètre ont été choisis*/
                     if(vRelationParametres.containsKey(relation) && vRelationParametres.get(relation).contains(parametre))
                     {
-                        if(value.equals("inf")|| gy_min.equals("inf") || gy_plus.equals("inf"))
+                        if(value.equals("inf")|| (gy_min!=null && gy_min.equals("inf")) || (gy_plus!=null && gy_plus.equals("inf")))
                         {
-                             LoggerException.getLoggerException().log(Level.WARNING,null, new Exception_AbsenceValeur(objTIEG.getaTopic()+":"+objTIEG.getaIdDoc()+":"+objTIEG.getaExpN()));
-
-                             throw new Exception_AbsenceValeur(objTIEG.getaTopic()+":"+objTIEG.getaIdDoc()+":"+objTIEG.getaExpN());
+                             message="Valeur manquante::"+
+                                     "Topic-"+objTIEG.getaTopic()+"::"+
+                                     "IDDoc-"+objTIEG.getaIdDoc()+"::"+
+                                     "Experience Number-"+objTIEG.getaExpN()+"::"+
+                                     "Treatment-"+treatment+"::"+
+                                     "Relation-"+relation+"::"+
+                                     "Parameter-"+parametre+"::"+
+                                     "Glucose Yield(-)-"+gy_min+"::"+
+                                     "Glucose Yield(+)-"+gy_plus;
+                             
+                             LoggerException.getLoggerException().log(Level.WARNING,null, new Exception_AbsenceValeur(message));
+                             
+                             //Sortir du traitement
+                             rapport.setMessage(message);
+                             
+                             return rapport;
                         }
                         else
                         {
@@ -299,18 +384,17 @@ class InterrogationDataRDF {
 
                             /*Si Glucose Yield n'est pas défini ???*/
 
-                            if(!gy_min.equals("") && gy_m!=0)
+                            if(gy_min!=null && gy_m==0)
                             {
                                 gy_m=AdaptationDonnees.conversionStringVersDouble(gy_min);
                             }
 
-                            if(!gy_plus.equals("") && gy_p!=0)
+                            if(gy_plus!=null && gy_p==0)
                             {
                                 gy_p=AdaptationDonnees.conversionStringVersDouble(gy_plus);
                             }
 
-                            /*A compléter*/
-                            vecteur=new Object_VecteurCalcul(objTIEG.getaTopic(),objTIEG.getaIdDoc(), objTIEG.getaExpN(),somme,1, AdaptationDonnees.conversionStringVersDouble(objTIEG.getaGrMin()), AdaptationDonnees.conversionStringVersDouble(objTIEG.getaGrMax()), gy_m, gy_p);
+                            vecteur=new Object_VecteurCalcul(objTIEG.getaTopic(),objTIEG.getaIdDoc(), objTIEG.getaExpN(),somme,1, AdaptationDonnees.conversionStringVersDouble(objTIEG.getaGrMin()), AdaptationDonnees.conversionStringVersDouble(objTIEG.getaGrMax()), gy_m, gy_p, reliability_min, reliability_max);
 
                         }
 
@@ -327,7 +411,7 @@ class InterrogationDataRDF {
                 case "IOException":
                     throw e;
                 default:
-                    LoggerException.getLoggerException().log(Level.WARNING,null, e);
+                    throw new Exception_SparqlConnexion(e);
      
             }
                 
@@ -336,6 +420,9 @@ class InterrogationDataRDF {
             qe.close();
         }
         
-        return vecteur;
+        //mise à jour du rendu du rapport
+        rapport.setVecteurCalcul(vecteur);
+        
+        return rapport;
     }
 }

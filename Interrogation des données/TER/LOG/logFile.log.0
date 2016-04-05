@@ -2,48 +2,35 @@
 <!DOCTYPE log SYSTEM "logger.dtd">
 <log>
 <record>
-  <date>2016-03-20T20:35:54</date>
-  <millis>1458502554962</millis>
+  <date>2016-03-30T16:40:16</date>
+  <millis>1459348816177</millis>
   <sequence>0</sequence>
   <logger>LoggerException</logger>
   <level>WARNING</level>
-  <class>packageLogger.Principal</class>
+  <class>ter.TER</class>
   <method>main</method>
-  <thread>1</thread>
-  <message>Houssem MSG</message>
-  <exception>
-    <message>packageExceptions.Exception_ParseException: Une erreur de ..................</message>
-    <frame>
-      <class>packageLogger.Principal</class>
-      <method>main</method>
-      <line>29</line>
-    </frame>
-  </exception>
-</record>
-</log>
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!DOCTYPE log SYSTEM "logger.dtd">
-<log>
-<record>
-  <date>2016-03-23T22:50:39</date>
-  <millis>1458769839704</millis>
-  <sequence>0</sequence>
-  <logger>LoggerException</logger>
-  <level>WARNING</level>
-  <class>ter.InterrogationDataRDF</class>
-  <method>getDocumentExperience</method>
   <thread>1</thread>
   <exception>
     <message>packageExceptions.Exception_SparqlConnexion: Une erreur de connexion avec le sparql endpoint. L'exécution du programme a été interrompue.</message>
     <frame>
       <class>ter.InterrogationDataRDF</class>
       <method>getDocumentExperience</method>
-      <line>107</line>
+      <line>110</line>
+    </frame>
+    <frame>
+      <class>ter.Interrogation</class>
+      <method>recupererExperienceBiomass</method>
+      <line>103</line>
+    </frame>
+    <frame>
+      <class>ter.Interrogation</class>
+      <method>initMatriceCalcul</method>
+      <line>72</line>
     </frame>
     <frame>
       <class>ter.TER</class>
       <method>main</method>
-      <line>62</line>
+      <line>100</line>
     </frame>
   </exception>
 </record>
@@ -52,40 +39,67 @@
 <!DOCTYPE log SYSTEM "logger.dtd">
 <log>
 <record>
-  <date>2016-03-24T01:57:59</date>
-  <millis>1458781079855</millis>
+  <date>2016-03-30T16:41:07</date>
+  <millis>1459348867683</millis>
   <sequence>0</sequence>
   <logger>LoggerException</logger>
   <level>WARNING</level>
-  <class>ter.InterrogationOntologie</class>
-  <method>initRelationParameters</method>
+  <class>ter.TER</class>
+  <method>main</method>
   <thread>1</thread>
   <exception>
-    <message>HttpException: -1</message>
+    <message>packageExceptions.Exception_SparqlConnexion: Une erreur de connexion avec le sparql endpoint. L'exécution du programme a été interrompue.</message>
     <frame>
-      <class>com.hp.hpl.jena.sparql.engine.http.HttpQuery</class>
-      <method>execGet</method>
-      <line>340</line>
+      <class>ter.InterrogationDataRDF</class>
+      <method>getDocumentExperience</method>
+      <line>110</line>
     </frame>
     <frame>
-      <class>com.hp.hpl.jena.sparql.engine.http.HttpQuery</class>
-      <method>exec</method>
-      <line>276</line>
+      <class>ter.Interrogation</class>
+      <method>recupererExperienceBiomass</method>
+      <line>103</line>
     </frame>
     <frame>
-      <class>com.hp.hpl.jena.sparql.engine.http.QueryEngineHTTP</class>
-      <method>execSelect</method>
-      <line>346</line>
-    </frame>
-    <frame>
-      <class>ter.InterrogationOntologie</class>
-      <method>initRelationParameters</method>
-      <line>87</line>
+      <class>ter.Interrogation</class>
+      <method>initMatriceCalcul</method>
+      <line>72</line>
     </frame>
     <frame>
       <class>ter.TER</class>
       <method>main</method>
-      <line>69</line>
+      <line>100</line>
+    </frame>
+  </exception>
+</record>
+</log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2016-03-30T17:08:34</date>
+  <millis>1459350514509</millis>
+  <sequence>0</sequence>
+  <logger>LoggerException</logger>
+  <level>WARNING</level>
+  <class>ter.TER</class>
+  <method>main</method>
+  <thread>1</thread>
+  <exception>
+    <message>packageExceptions.Exception_FichierCalcule: Une erreur de création du fichier de calcul. L'exécution du programme a été interrompue.</message>
+    <frame>
+      <class>ter.Interrogation</class>
+      <method>transformerMatriceCSV</method>
+      <line>207</line>
+    </frame>
+    <frame>
+      <class>ter.Interrogation</class>
+      <method>initMatriceCalcul</method>
+      <line>80</line>
+    </frame>
+    <frame>
+      <class>ter.TER</class>
+      <method>main</method>
+      <line>100</line>
     </frame>
   </exception>
 </record>

@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package ter;
+package packageInterrogationDonnees;
 
 import com.hp.hpl.jena.query.Query;
 import com.hp.hpl.jena.query.QueryExecution;
@@ -15,9 +15,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.logging.Level;
 import packageExceptions.Exception_SparqlConnexion;
-import packageLogger.LoggerException;
 
 /**
  *
@@ -50,7 +48,7 @@ class InterrogationOntologie {
 			   ?value rdfs:subClassOf* domain:matter_quantity}
             ORDER BY ASC(?relation_naire) ASC(?parametre) 
     */
-    static HashMap<String,ArrayList<String>> initRelationParameters() throws IOException, Exception_SparqlConnexion
+    static HashMap<String,ArrayList<String>> getRelationParameters() throws IOException, Exception_SparqlConnexion
     {
             String relation, parametre;
             
@@ -73,11 +71,13 @@ class InterrogationOntologie {
 "               BIND(strafter(str(?relation), \"#\") as ?relation_naire)\n" +
 "               ?relation rdfs:subClassOf ?restriction.\n" +
 "               ?restriction rdf:type owl:Restriction.\n" +
-"               ?restriction owl:onProperty core:hasImportantAccessConcept.\n" +
-"               ?restriction owl:someValuesFrom ?value.\n" +
-"               BIND(strafter(str(?value), \"#\") as ?parametre)\n" +
-"               ?value rdfs:subClassOf* domain:matter_quantity}\n" +
-"               ORDER BY ASC(?relation_naire) ASC(?parametre)";
+"			   OPTIONAL{\n" +
+"					   ?restriction owl:onProperty core:hasImportantAccessConcept.\n" +
+"					   ?restriction owl:someValuesFrom ?value.\n" +
+"					   FILTER( ?value!=domain:biomass_quantity )\n" +
+"					   BIND(strafter(str(?value), \"#\") as ?parametre)\n" +
+"					   ?value rdfs:subClassOf* domain:matter_quantity}}\n" +
+"            ORDER BY ASC(?relation_naire) ASC(?parametre)";
 
         
         Query query = QueryFactory.create(comNameQuery);  
@@ -96,17 +96,24 @@ class InterrogationOntologie {
                     
                     if(resultat.keySet().contains(relation))
                     {
-                        resultat.get(relation).add(solution.getLiteral("parametre").getLexicalForm());
+                        if(solution.getLiteral("parametre")!=null)
+                        {
+                            resultat.get(relation).add(solution.getLiteral("parametre").getLexicalForm());
+                        }  
                     }
                     else
                     {
-                        resultat.put(relation, new ArrayList<>(Arrays.asList(solution.getLiteral("parametre").getLexicalForm())));
+                        if(solution.getLiteral("parametre")!=null)
+                        {
+                            resultat.put(relation, new ArrayList<>(Arrays.asList(solution.getLiteral("parametre").getLexicalForm())));
+                        }
+                        
                     }
 
                 }
        } 
         catch(Exception e) { 
-           //LoggerException.getLoggerException().log(Level.WARNING,null, e);
+           
            throw new packageExceptions.Exception_SparqlConnexion(e);
         }
         finally {

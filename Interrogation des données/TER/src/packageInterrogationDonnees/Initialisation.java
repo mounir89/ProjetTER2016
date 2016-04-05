@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package ter;
+package packageInterrogationDonnees;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -28,7 +28,12 @@ class Initialisation {
     
     static HashMap<String,ArrayList<String>> initRelationParameters() throws IOException, Exception_SparqlConnexion
     {
-        return InterrogationOntologie.initRelationParameters();
+        return InterrogationOntologie.getRelationParameters();
+    }
+    
+    static ArrayList<String> initBiomass() throws IOException, Exception_SparqlConnexion
+    {
+        return InterrogationDataRDF.getBiomass();
     }
     
 }
