@@ -1,0 +1,210 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package packageInterrogationDonnees;
+
+import au.com.bytecode.opencsv.CSVWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.logging.Level;
+import packageExceptions.*;
+import packageLogger.LoggerException;
+
+/**
+ *
+ * @author proprietaire
+ */
+class Interrogation {
+    
+    
+    private static String vBiomass = new String(); /*Paramètre d'entrée communiqué par l'interface*/
+    
+    private static HashMap<String, ArrayList<String>> vTopicOperations; /*Paramètre d'entrée communiqué par l'interface*/
+    
+    private static HashMap<String, ArrayList<String>> vRelationParametres; /*Paramètre d'entrée communiqué par l'interface*/
+    
+    private static HashMap<String, ArrayList<String>> vTopicDocs= new HashMap<>();
+    
+    private static ArrayList<Object_TIEG> vDocExp=new ArrayList<>();
+    
+    private static ArrayList<Object_VecteurCalcul> vVecteurCalculGlobal= new ArrayList<>();
+    
+    private static String vPathFile;
+    
+    private static File vFichierCalcul; 
+    
+    
+                   
+    //LoggerException.getLoggerException().log(Level.WARNING,null,ex);
+    
+    static Object_RapportCalculMatrice initMatriceCalcul(String v_PathFile, String v_biomass, HashMap<String, ArrayList<String>> v_TopicOperations, HashMap<String, ArrayList<String>> v_RelationParametres ) throws Exception_AbsenceDocument, Exception_AbsenceExperienceBiomass, Exception_FichierCalcule, Exception_ParseException, IOException, Exception_BDDException, SQLException, Exception_SparqlConnexion
+    {
+        
+        vPathFile=v_PathFile; vBiomass=v_biomass; vTopicOperations=v_TopicOperations; vRelationParametres=v_RelationParametres;
+        
+        Object_RapportCalculMatrice rapport = new Object_RapportCalculMatrice();
+        
+        /*Interroger la BDD pour construire pour chaque Topic sa liste de documents*/
+        
+        for (String topic : vTopicOperations.keySet())
+        {
+            
+            ArrayList<String> listDoc = InterrogationBDD.getTopicDocument(topic);
+            
+            if(listDoc!=null)
+            {
+                vTopicDocs.put(topic, listDoc);
+            }
+        }
+        
+        /*Pour chaque Topic, pour chaque document vérifier si il existe une expérience sur ladite biomass*/
+        
+        recupererExperienceBiomass();
+        
+        /*Construire la matrice de calcul et renvoyer les messages d'absence de valeurs*/
+        
+        rapport.setMessage(construireMatriceCalcul());
+        
+        /*Transformer la matrice de calcul en fichier de sortie CSV exploitable avec R*/
+        
+        transformerMatriceCSV();
+        
+        /*Retourner le fichier*/
+        
+        rapport.setFichierCalcule(vFichierCalcul);
+        
+        /*Renvoyer le rapport*/
+        
+        return rapport;
+    }
+    
+    
+    private static void recupererExperienceBiomass() throws Exception_AbsenceDocument, IOException, Exception_SparqlConnexion
+    {
+         
+       if(vTopicDocs!=null)
+       {
+           for (String topic : vTopicDocs.keySet())
+           {
+               ArrayList<String> listDoc = vTopicDocs.get(topic);
+               
+               for(String idDoc : listDoc)
+               {
+                   ArrayList<Object_TIEG> listeObj = InterrogationDataRDF.getDocumentExperience(vBiomass,topic,idDoc);
+                   
+                   if(listeObj!=null)
+                   {
+                       vDocExp.addAll(listeObj);
+                   }
+               }
+           }
+    
+       }
+       else
+       {
+         
+           LoggerException.getLoggerException().log(Level.WARNING,null, new Exception_ParseException());
+
+           throw new Exception_AbsenceDocument();
+
+       }
+       
+    }
+    
+    private static ArrayList<String> construireMatriceCalcul() throws Exception_AbsenceExperienceBiomass, Exception_ParseException,IOException, Exception_SparqlConnexion {
+
+        /*Pour chaque objetc : Object_TIEG de vDocExp construire le vecteur d'entrée au calul*/
+        /*Le vecteur résultant sera placé sur : vVecteurCalculGlobal*/
+        /*En cas de valeurs manquantes, le vecteur sera null, un message indiquant l'emplacement du manque ser transmis à la servlet*/
+      
+      Object_RapportCalculVecteur rapport;
+          
+      ArrayList<String> message= new ArrayList<>();
+      
+      if(vDocExp!=null)
+      {
+              
+          for(Object_TIEG obj : vDocExp)
+          {
+             try {   
+
+                 if((rapport=InterrogationDataRDF.getVecteurCalcul(obj, vTopicOperations, vRelationParametres)).getVecteurCalcul()!=null)
+                 {
+                    vVecteurCalculGlobal.add(rapport.getVecteurCalcul());
+                 }
+                 else
+                 {
+                    message.add(rapport.getMessage());
+                 }
+                   
+              } catch (Exception_ParseException ex) {
+     
+                      throw ex;
+              }
+          }
+
+      }
+      else
+      {
+          throw new Exception_AbsenceExperienceBiomass();
+      }
+      
+      return message;
+      
+    }
+    
+    private static void transformerMatriceCSV() throws Exception_FichierCalcule, IOException
+    {
+
+        try {
+            
+                if((vFichierCalcul=new File(vPathFile+"/CalculeR.csv")).exists())
+                {
+                    vFichierCalcul.delete();
+                }
+
+                vFichierCalcul.createNewFile();
+            
+                try (CSVWriter writer = new CSVWriter(new FileWriter(vPathFile+"/CalculeR.csv"))) 
+                {
+                    List<String[]> data = new ArrayList<>();
+                    
+                    //On ajoute le header
+                    
+                    data.add(new String[]{"TOPIC","IDDOCUMENT","EXPERIENCE_NUMBER",
+                                              "BIOMASS_QTY",
+                                              "QUANTITY_MATTER",
+                                              "GLUCOSE_RATE_MIN","GLUCOSE_RATE_MAX",
+                                              "GLUCOSE_YIELD_MIN","GLUCOSE_YIELD_MAX",
+                                              "RELIABILITY_MIN","RELIABILITY_MAX"});
+
+                    vVecteurCalculGlobal.stream().forEach((vector) -> {
+
+                        data.add(new String[]{vector.getaTopic(),vector.getaIdDoc(),vector.getaExpN(),
+                                              Double.toString(vector.getaBiomassQty()),
+                                              Double.toString(AdaptationDonnees.doubleFractionPrecision(vector.getaSomme(),4)),
+                                              Double.toString(AdaptationDonnees.doubleFractionPrecision(vector.getaGrMin()/100,4)),Double.toString(AdaptationDonnees.doubleFractionPrecision(vector.getaGrMax()/100,4)), //On divise par 100 pour ramener le % en KG
+                                              Double.toString(AdaptationDonnees.doubleFractionPrecision(vector.getaGyMin()/100,4)),Double.toString(AdaptationDonnees.doubleFractionPrecision(vector.getaGyMax()/100,4)), //On divise par 100 pour ramener le % en KG
+                                              Double.toString(AdaptationDonnees.doubleFractionPrecision(vector.getaReliabilityMin()/5,2)),Double.toString(AdaptationDonnees.doubleFractionPrecision(vector.getaReliabilityMax()/5,2))}); //On divise la Reliability par 5 pour la normanliser sur une echelle de 0-->1
+
+                    });
+
+                    writer.writeAll(data);
+                }
+                
+            } catch (IOException ex) {
+ 
+                throw new Exception_FichierCalcule();
+            }
+        
+        
+    }
+ 
+}

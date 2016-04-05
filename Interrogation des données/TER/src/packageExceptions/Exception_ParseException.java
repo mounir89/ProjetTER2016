@@ -15,7 +15,8 @@ public class Exception_ParseException extends Exception{
         super("Une erreur de conversion de type. L'exécution du programme a été interrompue.");
     }
     
-    public String getExceptionMessage()
+    @Override
+    public String getMessage()
     {
         return "Une erreur de conversion de type. L'exécution du programme a été interrompue.";
     }

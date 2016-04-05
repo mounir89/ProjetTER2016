@@ -15,7 +15,8 @@ public class Exception_AbsenceDocument extends Exception{
         super("Aucun document ne figure dans le(s) topic(s) choisi(s).");
     }
     
-    public String getExceptionMessage()
+    @Override
+    public String getMessage()
     {
         return "Aucun document ne figure dans le(s) topic(s) choisi(s).";
     }
