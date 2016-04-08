@@ -15,7 +15,8 @@ public class Exception_AbsenceExperienceBiomass extends Exception{
         super("Aucune expérience ne traite de la biomass sélectionnée.");
     }
 
-    public String getExceptionMessage()
+    @Override
+    public String getMessage()
     {
         return "Aucune expérience ne traite de la biomass sélectionnée.";
     }

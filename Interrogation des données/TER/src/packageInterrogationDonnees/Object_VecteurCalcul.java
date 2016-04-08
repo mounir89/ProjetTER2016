@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package ter;
+package packageInterrogationDonnees;
 
 /**
  *
@@ -28,8 +28,12 @@ public class Object_VecteurCalcul {
     private double aGyMin;
     
     private double aGyMax;
+    
+    private double aReliabilityMin;
+    
+    private double aReliabilityMax;
 
-    public Object_VecteurCalcul(String aTopic, String aIdDoc, String aExpN, double aSomme, double aBiomassQty, double aGrMin, double aGrMax, double aGyMin, double aGyMax) {
+    public Object_VecteurCalcul(String aTopic, String aIdDoc, String aExpN, double aSomme, double aBiomassQty, double aGrMin, double aGrMax, double aGyMin, double aGyMax, double aReliabilityMin, double aReliabilityMax) {
         
         this.aTopic = aTopic;
         this.aIdDoc = aIdDoc;
@@ -40,9 +44,28 @@ public class Object_VecteurCalcul {
         this.aGrMax = aGrMax;
         this.aGyMin = aGyMin;
         this.aGyMax = aGyMax;
+        this.aReliabilityMin = aReliabilityMin;
+        this.aReliabilityMax = aReliabilityMax;
         
     }
 
+    public double getaReliabilityMin() {
+        return aReliabilityMin;
+    }
+
+    public void setaReliabilityMin(double aReliabilityMin) {
+        this.aReliabilityMin = aReliabilityMin;
+    }
+
+    public double getaReliabilityMax() {
+        return aReliabilityMax;
+    }
+
+    public void setaReliabilityMax(double aReliabilityMax) {
+        this.aReliabilityMax = aReliabilityMax;
+    }
+
+    
     public String getaTopic() {
         return aTopic;
     }

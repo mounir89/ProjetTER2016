@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package ter;
+package packageInterrogationDonnees;
 
 import java.io.IOException;
 import java.sql.Connection;
@@ -33,23 +33,23 @@ class InterrogationBDD {
         ResultSet result;
 
         conn = ConnexionDB.getConnection();
-         
+  
         //Création d'un objet PrepareStatement
         pst = conn.prepareStatement("select d.id_documents"
-                      + " from documents d, topics t, ontology o"
+                      + " from public.documents d, public.topics t, public.ontology o"
                       + " where o.id_ontology=t.id_ontology"
                       + " and t.id_topic=d.id_topic"
                       + " and o.name='BIOREFINERY'"
-                      + " and t.name= ?"); 
+                      + " and t.name=?"); 
                     
         //Edition du paramètre topic
-        pst.setString(1, topic);
+        pst.setString(1,topic);
                     
         //L'objet ResultSet contient le résultat de la requête SQL
         result = pst.executeQuery();      
                 
         while(result.next()){
-                    
+           
             listeDoc.add(result.getString(1));
                     
         }
@@ -57,9 +57,12 @@ class InterrogationBDD {
         pst.close();
 
         result.close();
+        
 
         if(listeDoc.size()>0)
-        {return listeDoc;}
+        {            
+            return listeDoc;
+        }
             
         return null;
     }

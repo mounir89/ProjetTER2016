@@ -15,7 +15,8 @@ public class Exception_AbsenceValeur extends Exception{
         super("Des valeurs nécessaires au calcul sont indéfinies ("+message+"). L'exécution du programme a été interrompue.");
     }
     
-    public String getExceptionMessage()
+    @Override
+    public String getMessage()
     {
         return "Des valeurs nécessaires au calcul sont indéfinies. L'exécution du programme a été interrompue.";
     }

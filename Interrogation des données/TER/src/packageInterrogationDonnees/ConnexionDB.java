@@ -3,13 +3,11 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package ter;
+package packageInterrogationDonnees;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import packageExceptions.Exception_BDDException;
 
 
@@ -23,7 +21,7 @@ class ConnexionDB {
     
     static Connection getConnection() throws Exception_BDDException
     {
-        if(connection!=null)
+        if(connection==null)
         {
             System.out.println("-------- PostgreSQL JDBC Connection Testing ------------");
 
@@ -42,7 +40,7 @@ class ConnexionDB {
 		try {
 
 			connection = DriverManager.getConnection(
-					"jdbc:postgresql://127.0.0.1:5432/atwebdb", "role_TER_user",
+					"jdbc:postgresql://localhost:5432/atwebdb","role_TER_user",
 					"Admin123");
 
 		} catch (SQLException e) {
@@ -52,7 +50,6 @@ class ConnexionDB {
 		}
                  
         }
-
         return connection;
     }
    
