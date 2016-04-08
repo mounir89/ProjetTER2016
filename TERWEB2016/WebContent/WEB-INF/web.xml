@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://java.sun.com/xml/ns/javaee" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd" id="WebApp_ID" version="3.0">
+  <display-name>TERWEB2016</display-name>
+  <servlet>
+    <servlet-name>PagePrincipal</servlet-name>
+    <servlet-class>com.terweb.servlets.PagePrincipal</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>PagePrincipal</servlet-name>
+    <url-pattern>/index</url-pattern>
+  </servlet-mapping>
+  
+  <servlet>
+    <servlet-name>BestExperience</servlet-name>
+    <servlet-class>com.terweb.servlets.BestExperience</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>BestExperience</servlet-name>
+    <url-pattern>/Best</url-pattern>
+  </servlet-mapping>
+  
+   <servlet>
+    <servlet-name>AllVarTopic</servlet-name>
+    <servlet-class>com.terweb.servlets.AllVarTopic</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>AllVarTopic</servlet-name>
+    <url-pattern>/All-Variation-Topic-Efactor</url-pattern>
+  </servlet-mapping>
+  
+   <servlet>
+    <servlet-name>AllVarDoc</servlet-name>
+    <servlet-class>com.terweb.servlets.AllVarDoc</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>AllVarDoc</servlet-name>
+    <url-pattern>/All-Variation-Docucment-Efactor</url-pattern>
+  </servlet-mapping>
+</web-app>
