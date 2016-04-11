@@ -40,56 +40,65 @@ public class Interrogation {
     private static String vPathFile;
     
     private static File vFichierCalcul; 
-    
-    
-                   
+              
     //LoggerException.getLoggerException().log(Level.WARNING,null,ex);
     
     static Object_RapportCalculMatrice initMatriceCalcul(String v_PathFile, String v_biomass, HashMap<String, ArrayList<String>> v_TopicOperations, HashMap<String, ArrayList<String>> v_RelationParametres ) throws Exception_AbsenceDocument, Exception_AbsenceExperienceBiomass, Exception_FichierCalcule, Exception_ParseException, IOException, Exception_BDDException, SQLException, Exception_SparqlConnexion, Exception_MatriceCalculVide
     {
-        
-        vPathFile=v_PathFile; vBiomass=v_biomass; vTopicOperations=v_TopicOperations; vRelationParametres=v_RelationParametres;
-        
         Object_RapportCalculMatrice rapport = new Object_RapportCalculMatrice();
-        
-        /*Interroger la BDD pour construire pour chaque Topic sa liste de documents*/
-        
-        for (String topic : vTopicOperations.keySet())
+         
+        if((v_biomass!=null) && (v_TopicOperations.size()>0) && (v_RelationParametres.size()>0))
         {
-            
-            ArrayList<String> listDoc = InterrogationBDD.getTopicDocument(topic);
-            
-            if(listDoc!=null)
+            vPathFile=v_PathFile; vBiomass=v_biomass; vTopicOperations=v_TopicOperations; vRelationParametres=v_RelationParametres;
+
+            /*Interroger la BDD pour construire pour chaque Topic sa liste de documents (vTopicDocs)*/
+
+            for (String topic : vTopicOperations.keySet())
             {
-                vTopicDocs.put(topic, listDoc);
+
+                ArrayList<String> listDoc = InterrogationBDD.getTopicDocument(topic);
+
+                if(listDoc!=null)
+                {
+                    vTopicDocs.put(topic, listDoc);
+                }
             }
-        }
-        
-        /*Pour chaque Topic, pour chaque document vérifier si il existe une expérience sur ladite biomass*/
-        
-        recupererExperienceBiomass();
-        
-        /*Construire la matrice de calcul et renvoyer les messages d'absence de valeurs*/
-        
-        rapport.setMessage(construireMatriceCalcul());
-        
-        /*Transformer la matrice de calcul en fichier de sortie CSV exploitable avec R*/
-        
-        if(vVecteurCalculGlobal.size()>0)
-        {
-            transformerMatriceCSV();
+
+            /*Pour chaque Topic, pour chaque document vérifier si il existe une expérience sur ladite biomass*/
+            /*Si !(vTopicDocs.size() > 0) ---> Exception_AbsenceDocument()*/
+            /*Resultat : vDocExp*/
+
+            recupererExperienceBiomass();
+
+            /*Construire la matrice de calcul et renvoyer les messages d'absence de valeurs*/
+            /*Si !(vDocExp.size() > 0) --> Exception_AbsenceExperienceBiomass*/
+            /*Resultat : vVecteurCalculGlobal*/
+
+            rapport.setMessage(construireMatriceCalcul());
+
+            /*Transformer la matrice de calcul en fichier de sortie CSV exploitable avec R*/
+
+            if(vVecteurCalculGlobal.size()>0)
+            {
+                transformerMatriceCSV();
+            }
+            else
+            {
+                throw new Exception_MatriceCalculVide();
+            }
+
+            /*Retourner le fichier*/
+
+            rapport.setFichierCalcule(vFichierCalcul);
+
+
         }
         else
         {
             throw new Exception_MatriceCalculVide();
         }
-              
-        /*Retourner le fichier*/
-        
-        rapport.setFichierCalcule(vFichierCalcul);
         
         /*Renvoyer le rapport*/
-        
         return rapport;
     }
     
@@ -97,7 +106,7 @@ public class Interrogation {
     private static void recupererExperienceBiomass() throws Exception_AbsenceDocument, IOException, Exception_SparqlConnexion
     {
          
-       if(vTopicDocs!=null)
+       if(vTopicDocs.size() > 0 )
        {
            for (String topic : vTopicDocs.keySet())
            {
@@ -118,7 +127,7 @@ public class Interrogation {
        else
        {
          
-           LoggerException.getLoggerException().log(Level.WARNING,null, new Exception_ParseException());
+           //LoggerException.getLoggerException().log(Level.WARNING,null, new Exception_ParseException());
 
            throw new Exception_AbsenceDocument();
 
@@ -136,7 +145,7 @@ public class Interrogation {
           
       ArrayList<String> message= new ArrayList<>();
       
-      if(vDocExp!=null)
+      if(vDocExp.size() > 0)
       {
               
           for(Object_TIEG obj : vDocExp)
@@ -149,7 +158,11 @@ public class Interrogation {
                  }
                  else
                  {
-                    message.add(rapport.getMessage());
+                   if(rapport.getMessage()!=null)
+                   {
+                      message.add(rapport.getMessage());
+                   }
+                   
                  }
                    
               } catch (Exception_ParseException ex) {
@@ -157,13 +170,12 @@ public class Interrogation {
                       throw ex;
               }
           }
-
       }
       else
       {
           throw new Exception_AbsenceExperienceBiomass();
       }
-      
+        
       return message;
       
     }
@@ -193,17 +205,17 @@ public class Interrogation {
                                               "GLUCOSE_YIELD_MIN","GLUCOSE_YIELD_MAX",
                                               "RELIABILITY_MIN","RELIABILITY_MAX"});
 
-                    for(Object_VecteurCalcul vector : vVecteurCalculGlobal)
-                    {
-                    	data.add(new String[]{vector.getaTopic(),vector.getaIdDoc(),vector.getaExpN(),
-                                Double.toString(vector.getaBiomassQty()),
-                                Double.toString(AdaptationDonnees.doubleFractionPrecision(vector.getaSomme(),4)),
-                                Double.toString(AdaptationDonnees.doubleFractionPrecision(vector.getaGrMin()/100,4)),Double.toString(AdaptationDonnees.doubleFractionPrecision(vector.getaGrMax()/100,4)), //On divise par 100 pour ramener le % en KG
-                                Double.toString(AdaptationDonnees.doubleFractionPrecision(vector.getaGyMin()/100,4)),Double.toString(AdaptationDonnees.doubleFractionPrecision(vector.getaGyMax()/100,4)), //On divise par 100 pour ramener le % en KG
-                                Double.toString(AdaptationDonnees.doubleFractionPrecision(vector.getaReliabilityMin()/5,2)),Double.toString(AdaptationDonnees.doubleFractionPrecision(vector.getaReliabilityMax()/5,2))}); //On divise la Reliability par 5 pour la normanliser sur une echelle de 0-->1
-	
-                    }
-                        
+                    vVecteurCalculGlobal.stream().forEach((vector) -> {
+
+                        data.add(new String[]{vector.getaTopic(),vector.getaIdDoc(),vector.getaExpN(),
+                                              Double.toString(vector.getaBiomassQty()),
+                                              Double.toString(AdaptationDonnees.doubleFractionPrecision(vector.getaSomme(),4)),
+                                              Double.toString(AdaptationDonnees.doubleFractionPrecision(vector.getaGrMin()/100,4)),Double.toString(AdaptationDonnees.doubleFractionPrecision(vector.getaGrMax()/100,4)), //On divise par 100 pour ramener le % en KG
+                                              Double.toString(AdaptationDonnees.doubleFractionPrecision(vector.getaGyMin()/100,4)),Double.toString(AdaptationDonnees.doubleFractionPrecision(vector.getaGyMax()/100,4)), //On divise par 100 pour ramener le % en KG
+                                              Double.toString(AdaptationDonnees.doubleFractionPrecision(vector.getaReliabilityMin()/5,2)),Double.toString(AdaptationDonnees.doubleFractionPrecision(vector.getaReliabilityMax()/5,2))}); //On divise la Reliability par 5 pour la normanliser sur une echelle de 0-->1
+
+                    });
+
                     writer.writeAll(data);
                 }
                 
