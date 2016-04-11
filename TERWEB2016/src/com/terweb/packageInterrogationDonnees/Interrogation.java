@@ -205,7 +205,7 @@ public class Interrogation {
                                               "GLUCOSE_YIELD_MIN","GLUCOSE_YIELD_MAX",
                                               "RELIABILITY_MIN","RELIABILITY_MAX"});
 
-                    vVecteurCalculGlobal.stream().forEach((vector) -> {
+                    for( Object_VecteurCalcul vector : vVecteurCalculGlobal){
 
                         data.add(new String[]{vector.getaTopic(),vector.getaIdDoc(),vector.getaExpN(),
                                               Double.toString(vector.getaBiomassQty()),
@@ -214,7 +214,7 @@ public class Interrogation {
                                               Double.toString(AdaptationDonnees.doubleFractionPrecision(vector.getaGyMin()/100,4)),Double.toString(AdaptationDonnees.doubleFractionPrecision(vector.getaGyMax()/100,4)), //On divise par 100 pour ramener le % en KG
                                               Double.toString(AdaptationDonnees.doubleFractionPrecision(vector.getaReliabilityMin()/5,2)),Double.toString(AdaptationDonnees.doubleFractionPrecision(vector.getaReliabilityMax()/5,2))}); //On divise la Reliability par 5 pour la normanliser sur une echelle de 0-->1
 
-                    });
+                    }
 
                     writer.writeAll(data);
                 }
