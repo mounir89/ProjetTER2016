@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package packageInterrogationDonnees;
+package com.terweb.packageInterrogationDonnees;
 
 import com.hp.hpl.jena.query.Query;
 import com.hp.hpl.jena.query.QueryExecution;
@@ -18,8 +18,8 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import packageExceptions.Exception_BDDException;
-import packageExceptions.Exception_SparqlConnexion;
+import com.terweb.packageExceptions.Exception_BDDException;
+import com.terweb.packageExceptions.Exception_SparqlConnexion;
 
 /**
  *
