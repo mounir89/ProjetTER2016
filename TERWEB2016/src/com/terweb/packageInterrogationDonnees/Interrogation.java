@@ -45,7 +45,7 @@ public class Interrogation {
                    
     //LoggerException.getLoggerException().log(Level.WARNING,null,ex);
     
-   public static Object_RapportCalculMatrice initMatriceCalcul(String v_PathFile, String v_biomass, HashMap<String, ArrayList<String>> v_TopicOperations, HashMap<String, ArrayList<String>> v_RelationParametres ) throws Exception_AbsenceDocument, Exception_AbsenceExperienceBiomass, Exception_FichierCalcule, Exception_ParseException, IOException, Exception_BDDException, SQLException, Exception_SparqlConnexion
+    static Object_RapportCalculMatrice initMatriceCalcul(String v_PathFile, String v_biomass, HashMap<String, ArrayList<String>> v_TopicOperations, HashMap<String, ArrayList<String>> v_RelationParametres ) throws Exception_AbsenceDocument, Exception_AbsenceExperienceBiomass, Exception_FichierCalcule, Exception_ParseException, IOException, Exception_BDDException, SQLException, Exception_SparqlConnexion, Exception_MatriceCalculVide
     {
         
         vPathFile=v_PathFile; vBiomass=v_biomass; vTopicOperations=v_TopicOperations; vRelationParametres=v_RelationParametres;
@@ -75,8 +75,15 @@ public class Interrogation {
         
         /*Transformer la matrice de calcul en fichier de sortie CSV exploitable avec R*/
         
-        transformerMatriceCSV();
-        
+        if(vVecteurCalculGlobal.size()>0)
+        {
+            transformerMatriceCSV();
+        }
+        else
+        {
+            throw new Exception_MatriceCalculVide();
+        }
+              
         /*Retourner le fichier*/
         
         rapport.setFichierCalcule(vFichierCalcul);
