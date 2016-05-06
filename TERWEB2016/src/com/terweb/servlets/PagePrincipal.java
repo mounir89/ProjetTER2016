@@ -55,9 +55,9 @@ public class PagePrincipal extends HttpServlet {
 		
 		try {
 			
-			ArrayList<String> biomass = Initialisation.initBiomass();
+			ArrayList<String> biomass = Initialisation.initBiomass(getServletContext().getRealPath("/").replaceAll("\\\\", "/"));
 			HashMap<String, ArrayList<String>> topics = Initialisation.initTopicOperation();
-			HashMap<String, ArrayList<String>> relations = Initialisation.initRelationParameters();
+			HashMap<String, ArrayList<String>> relations = Initialisation.initRelationParameters(getServletContext().getRealPath("/").replaceAll("\\\\", "/"));
 		
 		    
 			request.setAttribute("biomass",biomass);
@@ -97,11 +97,11 @@ public class PagePrincipal extends HttpServlet {
 	        
 	        Object_RapportCalculMatrice rapport = new Object_RapportCalculMatrice();
 	        
-	        //try {
+	        try {
 	        	
 	        	String pathUser=getServletContext().getRealPath("/").replaceAll("\\\\", "/")+"DirectoryUsers/"+parametres.getUserID();
 	        
-	        //	rapport = Interrogation.initMatriceCalcul(pathUser,parametres.getBiomass(),parametres.getTopics(),parametres.getRelations());
+	        	rapport = Interrogation.initMatriceCalcul(pathUser,parametres.getBiomass(),parametres.getTopics(),parametres.getRelations());
 			    
 	        	System.out.println("---------------------"+rapport.getMessage());
 	        	
@@ -120,7 +120,7 @@ public class PagePrincipal extends HttpServlet {
 	        		
 	        	}
 	     
-	        /*} catch (Exception_AbsenceDocument
+	        } catch (Exception_AbsenceDocument
 					| Exception_AbsenceExperienceBiomass
 					| Exception_FichierCalcule | Exception_ParseException
 					| Exception_BDDException | SQLException
@@ -132,7 +132,7 @@ public class PagePrincipal extends HttpServlet {
 	    			 
 			
 				
-			}*/
+			}
 	         
 	        /*************** calcul en R ******************/
 	        
