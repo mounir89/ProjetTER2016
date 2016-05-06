@@ -4,6 +4,7 @@
  * and open the template in the editor.
  */
 package com.terweb.packageInterrogationDonnees;
+
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -13,15 +14,13 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.logging.Level;
-import  com.terweb.packageExceptions.Exception_BDDException;
-import com.terweb.packageLogger.LoggerException;
+import com.terweb.packageExceptions.Exception_BDDException;
 
 /**
  *
  * @author proprietaire
  */
-class InterrogationBDD {
+public class InterrogationBDD {
     
     static ArrayList<String> getTopicDocument(String topic) throws Exception_BDDException, SQLException
     {
@@ -81,7 +80,7 @@ class InterrogationBDD {
                           " AND r.id_operations=o.id_operations" +
                           " AND t.id_ontology=b.id_ontology" +
                           " AND	UPPER(b.name)='BIOREFINERY'" +
-                          " ORDER BY t.name, o.name_en";
+                          " ORDER BY (t.name, o.name_en) ASC";
         
  
         conn = ConnexionDB.getConnection();
@@ -110,7 +109,7 @@ class InterrogationBDD {
         st.close();
 
         result.close();
-     
+            
         return liste;
     }
     

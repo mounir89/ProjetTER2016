@@ -7,13 +7,13 @@ package com.terweb.packageInterrogationDonnees;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
-import  com.terweb.packageExceptions.Exception_ParseException;
+import com.terweb.packageExceptions.Exception_ParseException;
 
 /**
  *
  * @author proprietaire
  */
-class AdaptationDonnees {
+public class AdaptationDonnees {
     
     static double conversionStringVersDouble(String valeur) throws Exception_ParseException
     { 

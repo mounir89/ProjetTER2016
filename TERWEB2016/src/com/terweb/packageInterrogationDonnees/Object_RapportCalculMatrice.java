@@ -18,14 +18,13 @@ public class Object_RapportCalculMatrice {
     private ArrayList<String> message;
 
     public Object_RapportCalculMatrice(File fichierCalcule, ArrayList<String> message) {
-    	
         this.fichierCalcule = fichierCalcule;
         this.message = message;
     }
     
     public Object_RapportCalculMatrice() {
         this.fichierCalcule = null;
-        this.message = new ArrayList<>();
+        this.message = null;
     }
     public File getFichierCalcule() {
         return fichierCalcule;
@@ -39,10 +38,8 @@ public class Object_RapportCalculMatrice {
         return message;
     }
 
-    public void setMessage(ArrayList<String> msg) {
-    	
-    	this.message=msg;
-
+    public void setMessage(ArrayList<String> message) {
+        this.message = message;
     }
     
     
