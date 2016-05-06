@@ -10,6 +10,8 @@ import com.hp.hpl.jena.query.QueryExecution;
 import com.hp.hpl.jena.query.QueryExecutionFactory;
 import com.hp.hpl.jena.query.QueryFactory;
 import com.hp.hpl.jena.query.QuerySolution;
+import com.hp.hpl.jena.rdf.model.Model;
+import com.hp.hpl.jena.util.FileManager;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -34,7 +36,7 @@ public class UpdateBDD {
      * un ensemble de traitements.
      */
     
-    static void execute() throws Exception_BDDException, SQLException, Exception_SparqlConnexion
+    public static void execute() throws Exception_BDDException, SQLException, Exception_SparqlConnexion
     {
         
         //Pour chaque Topic ---> Traitements correspondants
@@ -103,7 +105,7 @@ public class UpdateBDD {
      * 
      */
     
-    static HashMap<String,ArrayList<String>> getTopicDocument() throws Exception_BDDException, SQLException
+    private static HashMap<String,ArrayList<String>> getTopicDocument() throws Exception_BDDException, SQLException
     {
 
         HashMap<String,ArrayList<String>> liste = new HashMap<>();
@@ -158,7 +160,7 @@ public class UpdateBDD {
      * 
      */
     
-    static void rebuildTableOperation(ArrayList<String> treatments) throws Exception_BDDException, SQLException
+    private static void rebuildTableOperation(ArrayList<String> treatments) throws Exception_BDDException, SQLException
     {
         
         Connection conn;
@@ -202,7 +204,7 @@ public class UpdateBDD {
      * 
      */
     
-    static void rebuildTableTopicOperation(HashMap<String,ArrayList<String>> topicTreatment) throws Exception_BDDException, SQLException
+    private static void rebuildTableTopicOperation(HashMap<String,ArrayList<String>> topicTreatment) throws Exception_BDDException, SQLException
     {
         
         Connection conn;
@@ -240,7 +242,7 @@ public class UpdateBDD {
      * 
      */
     
-    static ArrayList<String> getDocumentTreatments(String idDocument) throws Exception_SparqlConnexion
+    private static ArrayList<String> getDocumentTreatments(String idDocument) throws Exception_SparqlConnexion
     {
         ArrayList<String> resultat = new ArrayList<>();
         
@@ -272,9 +274,23 @@ public class UpdateBDD {
                         "}\n" +
                         "ORDER BY ASC(?treatment)";
         
+                /************************LOCAL MODE ***********************************/
+                 
+        Model model= FileManager.get().loadModel("./RDF_DATA/annotations-atweb.ttl");
+         
+        Query query = QueryFactory.create(comNameQuery);  
+        
+        QueryExecution qe = QueryExecutionFactory.create(query, model); 
+         
+        /************************************************************************/
+
+        /**********************SPARQL ENDPOINT MODE*****************
+        
         Query query = QueryFactory.create(comNameQuery);  
         
         QueryExecution qe = QueryExecutionFactory.sparqlService(sparqlEndpoint,query);
+        
+        ************************************************************************/
 
         try {
                 com.hp.hpl.jena.query.ResultSet rs = qe.execSelect();
@@ -303,7 +319,7 @@ public class UpdateBDD {
      * 
      */
     
-    static ArrayList<String> getAllTreatment() throws Exception_SparqlConnexion
+    private static ArrayList<String> getAllTreatment() throws Exception_SparqlConnexion
     {
         ArrayList<String> resultat = new ArrayList<>();
         
@@ -334,9 +350,23 @@ public class UpdateBDD {
                         "}\n" +
                         "ORDER BY ASC(?treatment)";
         
+                /************************LOCAL MODE ***********************************/
+                 
+        Model model= FileManager.get().loadModel("./RDF_DATA/annotations-atweb.ttl");
+         
+        Query query = QueryFactory.create(comNameQuery);  
+        
+        QueryExecution qe = QueryExecutionFactory.create(query, model); 
+         
+        /************************************************************************/
+
+        /**********************SPARQL ENDPOINT MODE*****************
+        
         Query query = QueryFactory.create(comNameQuery);  
         
         QueryExecution qe = QueryExecutionFactory.sparqlService(sparqlEndpoint,query);
+        
+        ************************************************************************/
 
         try {
                 com.hp.hpl.jena.query.ResultSet rs = qe.execSelect();

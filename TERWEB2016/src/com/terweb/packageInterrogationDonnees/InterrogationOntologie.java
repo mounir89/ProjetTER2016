@@ -11,17 +11,22 @@ import com.hp.hpl.jena.query.QueryExecutionFactory;
 import com.hp.hpl.jena.query.QueryFactory;
 import com.hp.hpl.jena.query.QuerySolution;
 import com.hp.hpl.jena.query.ResultSet;
+import com.hp.hpl.jena.rdf.model.Model;
+import com.hp.hpl.jena.rdf.model.ModelFactory;
+import com.hp.hpl.jena.util.FileManager;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import  com.terweb.packageExceptions.Exception_SparqlConnexion;
+import com.terweb.packageExceptions.Exception_SparqlConnexion;
 
 /**
  *
  * @author proprietaire
  */
-class InterrogationOntologie {
+public class InterrogationOntologie {
     
     static String sparqlEndpoint = "http://pfl.grignon.inra.fr:3030/ontology/query";
 
@@ -48,9 +53,9 @@ class InterrogationOntologie {
 			   ?value rdfs:subClassOf* domain:matter_quantity}
             ORDER BY ASC(?relation_naire) ASC(?parametre) 
     */
-    static HashMap<String,ArrayList<String>> getRelationParameters() throws IOException, Exception_SparqlConnexion
+    static HashMap<String,ArrayList<String>> getRelationParameters(String path) throws IOException, Exception_SparqlConnexion
     {
-            String relation, parametre;
+            String relation;
             
             HashMap<String,ArrayList<String>> resultat= new HashMap<>();
           
@@ -63,26 +68,44 @@ class InterrogationOntologie {
 "            PREFIX skos: <http://www.w3.org/2004/02/skos/core#>\n" +
 "            PREFIX domain: <http://opendata.inra.fr/resources/BIORAF#>\n" +
 "\n" +
-"            SELECT DISTINCT ?relation_naire ?parametre\n" +
-"            WHERE { ?subject rdfs:subClassOf core:Relation.\n" +
+"            SELECT  DISTINCT ?relation_naire ?parametre\n" +
+"            WHERE { ?subject rdfs:subClassOf  core:Relation.\n" +
 "               ?subject skos:prefLabel \"Unit operation relation\"@en.\n" +
 "               ?operation rdfs:subClassOf ?subject.\n" +
 "               ?relation rdfs:subClassOf ?operation.\n" +
-"               BIND(strafter(str(?relation),\"#\") as ?relation_naire)\n" +
+"               BIND(strafter(str(?relation), \"#\") as ?relation_naire)\n" +
 "               ?relation rdfs:subClassOf ?restriction.\n" +
 "               ?restriction rdf:type owl:Restriction.\n" +
 "			   OPTIONAL{\n" +
 "					   ?restriction owl:onProperty core:hasImportantAccessConcept.\n" +
 "					   ?restriction owl:someValuesFrom ?value.\n" +
 "					   FILTER( ?value!=domain:biomass_quantity )\n" +
-"					   BIND(strafter(str(?value),\"#\") as ?parametre)\n" +
+"					   BIND(strafter(str(?value), \"#\") as ?parametre)\n" +
 "					   ?value rdfs:subClassOf* domain:matter_quantity}}\n" +
 "            ORDER BY ASC(?relation_naire) ASC(?parametre)";
 
         
+        /************************LOCAL MODE ***********************************/
+        
+        Path input = Paths.get(path+"DonneesLocales/Ontologie/", "biorefinery.owl");
+        Model model = ModelFactory.createDefaultModel() ; 
+        model.read(input.toUri().toString());
+            
+        //Model model= FileManager.get().loadModel(path+"DonneesLocales/Ontologie/biorefinery.owl");
+         
+        Query query = QueryFactory.create(comNameQuery);  
+        
+        QueryExecution qe = QueryExecutionFactory.create(query, model); 
+         
+        /************************************************************************/
+
+        /**********************SPARQL ENDPOINT MODE*****************
+        
         Query query = QueryFactory.create(comNameQuery);  
         
         QueryExecution qe = QueryExecutionFactory.sparqlService(sparqlEndpoint,query);
+        
+        ************************************************************************/
 
         try {
                 ResultSet rs = qe.execSelect();
@@ -119,7 +142,7 @@ class InterrogationOntologie {
         finally {
             qe.close();
         }
-        
+        	
         return resultat;
     }
 

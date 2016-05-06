@@ -8,14 +8,14 @@ package com.terweb.packageInterrogationDonnees;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import  com.terweb.packageExceptions.Exception_BDDException;
+import com.terweb.packageExceptions.Exception_BDDException;
 
 
 /**
  *
  * @author proprietaire
  */
-class ConnexionDB {
+public class ConnexionDB {
     
     private static Connection connection = null;
     
