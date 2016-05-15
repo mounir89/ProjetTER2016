@@ -134,7 +134,8 @@ public class InterrogationDataRDF {
     */
     static ArrayList<Object_TIEG> getDocumentExperience(String path, String vBiomass, String topic, String idDoc) throws IOException, Exception_SparqlConnexion
     {
-        ArrayList<Object_TIEG> resultat = new ArrayList<>();
+        
+    	ArrayList<Object_TIEG> resultat = new ArrayList<>();
         
         String comNameQuery=
             "prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n" +
@@ -165,7 +166,7 @@ public class InterrogationDataRDF {
     "        }\n" +
     "        ORDER BY ASC(?idDocument) ASC(?experience_number)";
 
-        /************************LOCAL MODE ***********************************/
+        //************************LOCAL MODE ***********************************
          
         Path input = Paths.get(path+"DonneesLocales/RDF/", "annotations_atweb.ttl");
         Model model = ModelFactory.createDefaultModel() ; 
@@ -177,7 +178,7 @@ public class InterrogationDataRDF {
         
         QueryExecution qe = QueryExecutionFactory.create(query, model); 
          
-        /************************************************************************/
+        //************************************************************************/
 
         /**********************SPARQL ENDPOINT MODE*****************
         
@@ -198,6 +199,7 @@ public class InterrogationDataRDF {
                                                           solution.getLiteral("glucose_rate_min").getLexicalForm(),
                                                           solution.getLiteral("glucose_rate_max").getLexicalForm())); 
             }
+
         } 
         catch(Exception e){ 
             
@@ -353,7 +355,7 @@ public class InterrogationDataRDF {
         "    ORDER BY ASC(?rowNumber) ASC(?relation)";
  
         
-        /************************LOCAL MODE ***********************************/
+        /************************LOCAL MODE ***********************************
           
         Path input = Paths.get(path+"DonneesLocales/RDF/", "annotations_atweb.ttl");
         Model model = ModelFactory.createDefaultModel() ; 
@@ -365,15 +367,15 @@ public class InterrogationDataRDF {
         
         QueryExecution qe = QueryExecutionFactory.create(query, model); 
          
-        /************************************************************************/
+        ************************************************************************/
 
-        /**********************SPARQL ENDPOINT MODE*****************
+        //**********************SPARQL ENDPOINT MODE*****************
         
         Query query = QueryFactory.create(comNameQuery);  
         
         QueryExecution qe = QueryExecutionFactory.sparqlService(sparqlEndpoint,query);
         
-        ************************************************************************/
+        //************************************************************************
 
         
         try {
@@ -424,12 +426,12 @@ public class InterrogationDataRDF {
                                      "Glucose Yield(-)-"+gy_min+"::"+
                                      "Glucose Yield(+)-"+gy_plus;
                              
-                             LoggerException.getLoggerException().log(Level.WARNING,null, new Exception_AbsenceValeur(message));
+                             //LoggerException.getLoggerException().log(Level.INFO,null, new Exception_AbsenceValeur(message));
                              
                              //Sortir du traitement
                              rapport.setMessage(message);
                              
-                             return rapport;
+                             //return rapport;
                         }
                         else
                         {
@@ -464,7 +466,7 @@ public class InterrogationDataRDF {
                 }
             }
         } 
-        catch(IOException | Exception_ParseException e) { 
+        catch(Exception_ParseException e) { 
             
             switch (e.getClass().toString()) {
                 case "Exception_ParseException":
