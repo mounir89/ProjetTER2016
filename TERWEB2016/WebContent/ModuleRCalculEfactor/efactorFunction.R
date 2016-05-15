@@ -6,6 +6,7 @@ efactorFunction=function(gluc.rate,gluc.yield,biomass.qty,solv.qty)
 	
 	enf=(((biomass.qty+solv.qty)-glucoseReleased.qty)/glucoseReleased.qty)
 	
-	return(enf)
+			
+	return(round(enf,3))
 }
 

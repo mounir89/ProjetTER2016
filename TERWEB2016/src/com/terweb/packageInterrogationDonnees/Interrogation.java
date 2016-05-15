@@ -50,7 +50,8 @@ public class Interrogation {
          
         if((v_biomass!=null) && (v_TopicOperations.size()>0) && (v_RelationParametres.size()>0))
         {
-            vPathFile=v_PathFile; vBiomass=v_biomass; vTopicOperations=v_TopicOperations; vRelationParametres=v_RelationParametres;
+
+        	vPathFile=v_PathFile; vBiomass=v_biomass; vTopicOperations=v_TopicOperations; vRelationParametres=v_RelationParametres;
 
             vPathRacine=v_PathFile.substring(0, v_PathFile.indexOf("DirectoryUsers"));
             
@@ -66,24 +67,26 @@ public class Interrogation {
                     vTopicDocs.put(topic, listDoc);
                 }
             }
-
+            
             /*Pour chaque Topic, pour chaque document vérifier si il existe une expérience sur ladite biomass*/
             /*Si !(vTopicDocs.size() > 0) ---> Exception_AbsenceDocument()*/
             /*Resultat : vDocExp*/
 
             recupererExperienceBiomass();
-
+            
             /*Construire la matrice de calcul et renvoyer les messages d'absence de valeurs*/
             /*Si !(vDocExp.size() > 0) --> Exception_AbsenceExperienceBiomass*/
             /*Resultat : vVecteurCalculGlobal*/
 
             rapport.setMessage(construireMatriceCalcul());
+            
+            
 
             /*Transformer la matrice de calcul en fichier de sortie CSV exploitable avec R*/
 
             if(vVecteurCalculGlobal.size()>0)
-            {
-                transformerMatriceCSV();
+            {            	
+            	transformerMatriceCSV();
             }
             else
             {
@@ -108,7 +111,7 @@ public class Interrogation {
     
     private static void recupererExperienceBiomass() throws Exception_AbsenceDocument, IOException, Exception_SparqlConnexion
     {
-         
+    	
        if(vTopicDocs.size() > 0 )
        {
            for (String topic : vTopicDocs.keySet())
@@ -117,7 +120,8 @@ public class Interrogation {
                
                for(String idDoc : listDoc)
                {
-                   ArrayList<Object_TIEG> listeObj = InterrogationDataRDF.getDocumentExperience(vPathRacine,vBiomass,topic,idDoc);
+            	   
+            	   ArrayList<Object_TIEG> listeObj = InterrogationDataRDF.getDocumentExperience(vPathRacine,vBiomass,topic,idDoc);
                    
                    if(listeObj!=null)
                    {
@@ -209,7 +213,7 @@ public class Interrogation {
                                               "RELIABILITY_MIN","RELIABILITY_MAX"});
 
                     for( Object_VecteurCalcul vector : vVecteurCalculGlobal){
-
+                    	
                         data.add(new String[]{vector.getaTopic(),vector.getaIdDoc(),vector.getaExpN(),
                                               Double.toString(vector.getaBiomassQty()),
                                               Double.toString(AdaptationDonnees.doubleFractionPrecision(vector.getaSomme(),4)),

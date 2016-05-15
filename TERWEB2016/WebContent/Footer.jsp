@@ -14,6 +14,9 @@
 </div>
 </div>
 <script type="text/javascript" src="Js/script.min.js"></script>
+<script type="text/javascript" src="Js/highcharts.js"></script>
+<script type="text/javascript" src="Js/graph.js"></script>
+<script type="text/javascript" src="Js/exporting.js"></script>
 </div>
 </div>
 </body>
