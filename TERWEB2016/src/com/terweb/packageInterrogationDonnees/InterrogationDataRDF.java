@@ -11,22 +11,29 @@ import com.hp.hpl.jena.query.QueryExecutionFactory;
 import com.hp.hpl.jena.query.QueryFactory;
 import com.hp.hpl.jena.query.QuerySolution;
 import com.hp.hpl.jena.query.ResultSet;
+import com.hp.hpl.jena.rdf.model.Model;
+import com.hp.hpl.jena.rdf.model.ModelFactory;
+import com.hp.hpl.jena.util.FileManager;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.logging.Level;
-import  com.terweb.packageExceptions.*;
+import com.terweb.packageExceptions.*;
 import com.terweb.packageLogger.LoggerException;
 
 /**
  *
  * @author proprietaire
  */
-class InterrogationDataRDF {
+
+public class InterrogationDataRDF {
    
     static String sparqlEndpoint = "http://pfl.grignon.inra.fr:3030/annotation/query";
     
-    static ArrayList<String> getBiomass() throws Exception_SparqlConnexion
+    static ArrayList<String> getBiomass(String path) throws Exception_SparqlConnexion, FileNotFoundException
     {
         ArrayList<String> resultat = new ArrayList<>();
         
@@ -41,20 +48,38 @@ class InterrogationDataRDF {
                 "SELECT DISTINCT ?biomass\n" +
                 "WHERE {\n" +
                 "			?document onto:hasForID ?idDocument; a onto:Document.\n" +
-                "  	        ?document onto:hasTable ?table.\n" +
+                "  	                ?document onto:hasTable ?table.\n" +
                 "  			?table dc:title ?tableTitle.\n" +
-                "       	FILTER regex(?tableTitle,\"Biomass\",\"i\")\n" +
-                "	        ?table onto:hasForRow ?row.\n" +
-                "	        ?row onto:hasForCell ?cell_biomass.\n" +
-                "			?cell_biomass a domain:biomass.\n" +
-                "	        ?cell_biomass onto:hasForFS/onto:hasForElement/rdf:type ?biomassURI\n" +
-                "   		BIND(strafter(str(?biomassURI), \"#\") as ?biomass)\n" +
+                "       		FILTER regex(?tableTitle, \"Biomass\", \"i\" )\n" +
+                "	                ?table onto:hasForRow ?row.\n" +
+                "	                ?row onto:hasForCell ?cell_biomass. \n" +
+                "	                ?cell_biomass a domain:biomass.\n" +
+                "	                ?cell_biomass onto:hasForFS/onto:hasForElement/rdf:type ?biomassURI\n" +
+                "   			BIND(strafter(str(?biomassURI), \"#\") as ?biomass)\n" +
                 "}\n" +
                 "ORDER BY ASC(?biomass)";
+        
+        /************************LOCAL MODE ***********************************/
+        
+        Path input = Paths.get(path+"DonneesLocales/RDF/", "annotations_atweb.ttl");
+        Model model = ModelFactory.createDefaultModel() ; 
+        model.read(input.toUri().toString());
+        
+        //Model model= FileManager.get().loadModel(path+"DonneesLocales/RDF/annotations_atweb.ttl");
+         
+        Query query = QueryFactory.create(comNameQuery);  
+        
+        QueryExecution qe = QueryExecutionFactory.create(query, model); 
+         
+        /************************************************************************/
+
+        /**********************SPARQL ENDPOINT MODE*****************
         
         Query query = QueryFactory.create(comNameQuery);  
         
         QueryExecution qe = QueryExecutionFactory.sparqlService(sparqlEndpoint,query);
+        
+        ************************************************************************/
 
         try {
                 ResultSet rs = qe.execSelect();
@@ -107,7 +132,7 @@ class InterrogationDataRDF {
         }
         ORDER BY ASC(?idDocument) ASC(?experience_number)
     */
-    static ArrayList<Object_TIEG> getDocumentExperience(String vBiomass, String topic, String idDoc) throws IOException, Exception_SparqlConnexion
+    static ArrayList<Object_TIEG> getDocumentExperience(String path, String vBiomass, String topic, String idDoc) throws IOException, Exception_SparqlConnexion
     {
         ArrayList<Object_TIEG> resultat = new ArrayList<>();
         
@@ -140,9 +165,27 @@ class InterrogationDataRDF {
     "        }\n" +
     "        ORDER BY ASC(?idDocument) ASC(?experience_number)";
 
+        /************************LOCAL MODE ***********************************/
+         
+        Path input = Paths.get(path+"DonneesLocales/RDF/", "annotations_atweb.ttl");
+        Model model = ModelFactory.createDefaultModel() ; 
+        model.read(input.toUri().toString()) ;
+        
+        //Model model= FileManager.get().loadModel(path+"DonneesLocales/RDF/annotations_atweb.ttl");
+         
+        Query query = QueryFactory.create(comNameQuery);  
+        
+        QueryExecution qe = QueryExecutionFactory.create(query, model); 
+         
+        /************************************************************************/
+
+        /**********************SPARQL ENDPOINT MODE*****************
+        
         Query query = QueryFactory.create(comNameQuery);  
         
         QueryExecution qe = QueryExecutionFactory.sparqlService(sparqlEndpoint,query);
+        
+        ************************************************************************/
 
         try {
                 ResultSet rs = qe.execSelect();
@@ -232,7 +275,7 @@ class InterrogationDataRDF {
     
     */
     
-    static Object_RapportCalculVecteur getVecteurCalcul(Object_TIEG objTIEG, HashMap<String, ArrayList<String>> vTopicOperations, HashMap<String, ArrayList<String>> vRelationParametres) throws Exception_ParseException,IOException, Exception_SparqlConnexion
+    static Object_RapportCalculVecteur getVecteurCalcul(String path, Object_TIEG objTIEG, HashMap<String, ArrayList<String>> vTopicOperations, HashMap<String, ArrayList<String>> vRelationParametres) throws Exception_ParseException,IOException, Exception_SparqlConnexion
     {
         String treatment,relation,biomass_quantity,biomass_unit,parametre,unit,value;
         
@@ -244,7 +287,7 @@ class InterrogationDataRDF {
         
         Object_VecteurCalcul vecteur=null;
         
-        String message=null;
+        String message;
         
         String comNameQuery="prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n" +
         "    prefix owl: <http://www.w3.org/2002/07/owl#>\n" +
@@ -310,9 +353,27 @@ class InterrogationDataRDF {
         "    ORDER BY ASC(?rowNumber) ASC(?relation)";
  
         
+        /************************LOCAL MODE ***********************************/
+          
+        Path input = Paths.get(path+"DonneesLocales/RDF/", "annotations_atweb.ttl");
+        Model model = ModelFactory.createDefaultModel() ; 
+        model.read(input.toUri().toString());
+        
+        //Model model= FileManager.get().loadModel(path+"DonneesLocales/RDF/annotations_atweb.ttl");
+         
+        Query query = QueryFactory.create(comNameQuery);  
+        
+        QueryExecution qe = QueryExecutionFactory.create(query, model); 
+         
+        /************************************************************************/
+
+        /**********************SPARQL ENDPOINT MODE*****************
+        
         Query query = QueryFactory.create(comNameQuery);  
         
         QueryExecution qe = QueryExecutionFactory.sparqlService(sparqlEndpoint,query);
+        
+        ************************************************************************/
 
         
         try {
