@@ -23,7 +23,7 @@ public class BestExperienceClass extends ClassAbstractCalculEfactor {
 	private BufferedReader  in;
 	
 	/**
-	 * 
+	 * Constructeur
 	 * @param pathCommun
 	 * @param userCurrentID
 	 */
@@ -32,6 +32,9 @@ public class BestExperienceClass extends ClassAbstractCalculEfactor {
 		this.userCurrentID = userCurrentID;
 	}
 	@Override
+	/**
+	 * Cette méthode permet de trouver la meilleure expérience du document
+	 */
 	public void bestExpEfactor() throws ClassCalculException, ClassFileProblemException {
 		
 		try {
@@ -125,7 +128,12 @@ public class BestExperienceClass extends ClassAbstractCalculEfactor {
 			e.printStackTrace();
 		}
      }
-
+   /**
+    * Calcul de l'E-factor pour la meilleure expérience du document
+    * @param pathFile
+    * @return boolean
+    * @throws ClassCalculException
+    */
 	public boolean CalculEfactor(String pathFile) throws ClassCalculException{
 		 
 		   String fileR = pathCh+"ModuleRCalculEfactor/bestCalculEfactor.R";

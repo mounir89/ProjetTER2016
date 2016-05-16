@@ -19,7 +19,7 @@ public class AllVarTopicClass extends ClassAbstractCalculEfactor {
 
 	
 	/**
-	 * 
+	 * Constructeur
 	 * @param pathCommun
 	 * @param userCurrentID
 	 */
@@ -30,6 +30,10 @@ public class AllVarTopicClass extends ClassAbstractCalculEfactor {
 	
 	
 	@Override
+	/**
+	 * Calcul de l'E-factor pour toutes les variations du Topic
+	 * Ainsi la fiabilité moyenne de tous les documents du topic
+	 */
 	public void allVarTopicEfactor() throws ClassCalculException, ClassFileProblemException {
 		try {
 			 AllVarDocClass alldoc = new AllVarDocClass(pathCh,userCurrentID);
@@ -71,6 +75,7 @@ public class AllVarTopicClass extends ClassAbstractCalculEfactor {
 	            	 if((lineTemp.size() == 16) && (lineFile.size() == 16)){
 	            		
 	            	   if(lineFile.get(0).toLowerCase().equals(lineTemp.get(0).toLowerCase())){
+	            		   
 			            	Double resultMin = (Double.valueOf(lineFile.get(12)) + Double.valueOf(lineTemp.get(12)));
 			            	
 			            	lineFile.set(12, resultMin.toString());
@@ -82,7 +87,14 @@ public class AllVarTopicClass extends ClassAbstractCalculEfactor {
 			            	lineFile.set(7, resultMinGy.toString());
 			            	
 			            	Double resultMaxGy = (Double.valueOf(lineFile.get(8)) + Double.valueOf(lineTemp.get(8)));
-			            	lineFile.set(8, resultMaxGy .toString());
+			            	lineFile.set(8, resultMaxGy.toString());
+			            	
+			            	
+			            	Double resultMinFia = (Double.valueOf(lineFile.get(9)) + Double.valueOf(lineTemp.get(9)));
+			            	lineFile.set(9, resultMinFia.toString());
+			            	
+			            	Double resultMaxFia = (Double.valueOf(lineFile.get(10)) + Double.valueOf(lineTemp.get(10)));
+			            	lineFile.set(10, resultMaxFia.toString());
 			            	
 			            	lineTemp.clear();
 			            	count++;
@@ -100,8 +112,23 @@ public class AllVarTopicClass extends ClassAbstractCalculEfactor {
 			            	lineFile.set(7, resultMinGy.toString());
 			            	
 			            	Double resultMaxGy = (Double)(Double.valueOf(lineFile.get(8))/count);
-			            	lineFile.set(8, resultMaxGy .toString());
+			            	lineFile.set(8, resultMaxGy.toString());
 			            	
+			            	Double resultMinFia = (Double)(Double.valueOf(lineFile.get(9))/count);
+			            	lineFile.set(9, resultMinFia.toString());
+			            	
+			            	Double resultMaxFia = (Double)(Double.valueOf(lineFile.get(10))/count);
+			            	lineFile.set(10, resultMaxFia.toString());
+			            	 
+			            	Double resultMoyen = resultAllMax+resultAllMin;
+			            	lineFile.set(14, resultMoyen.toString());
+			            	
+			            	Double resultMoyenF = resultMaxFia + resultMinFia ;
+			           	    lineFile.set(11, resultMoyenF.toString());
+			           	    
+			           	    Double resultMoyenY = resultMaxGy+ resultMinGy ;
+			           	    lineFile.set(15, resultMoyenY.toString());
+			            	 
 			            	count =0;
 			            	
 		                	String[] array = lineFile.toArray(new String[] {});
@@ -115,12 +142,35 @@ public class AllVarTopicClass extends ClassAbstractCalculEfactor {
 	            }
 	         count = count+1;
 	         
-     		 Double resultAllMin = (Double)(Double.valueOf(lineFile.get(12))/count);
-     		 lineFile.set(12, resultAllMin.toString());
-         	
-          	 Double resultAllMax = (Double)(Double.valueOf(lineFile.get(13))/count);
-         	 lineFile.set(13, resultAllMax.toString());
+	     		 Double resultAllMin = (Double)(Double.valueOf(lineFile.get(12))/count);
+	     		 lineFile.set(12, resultAllMin.toString());
+	         	
+	          	 Double resultAllMax = (Double)(Double.valueOf(lineFile.get(13))/count);
+	         	 lineFile.set(13, resultAllMax.toString());
+	         	 
+	         	 Double resultMoyen = resultAllMax+resultAllMin;
+	        	 lineFile.set(14, resultMoyen.toString());
+        	 
+        	 
+        		Double resultMinFia = (Double)(Double.valueOf(lineFile.get(9))/count);
+            	lineFile.set(9, resultMinFia.toString());
             	
+            	Double resultMaxFia = (Double)(Double.valueOf(lineFile.get(10))/count);
+            	lineFile.set(10, resultMaxFia.toString());
+            	
+            	Double resultMoyenF = resultMaxFia + resultMinFia ;
+           	    lineFile.set(11, resultMoyenF.toString());
+           	 
+	           	 
+           	    Double resultMinGy = (Double)(Double.valueOf(lineFile.get(7))/count);
+	         	lineFile.set(7, resultMinGy.toString());
+	         	
+	         	Double resultMaxGy = (Double)(Double.valueOf(lineFile.get(8))/count);
+	         	lineFile.set(8, resultMaxGy.toString());
+	         	
+           	    Double resultMoyenY = resultMaxGy+ resultMinGy ;
+        	    lineFile.set(15, resultMoyenY.toString());
+        	 
 	         String[] array = lineFile.toArray(new String[] {});
        	     writer.writeNext(array);
        	     lineFile.clear();

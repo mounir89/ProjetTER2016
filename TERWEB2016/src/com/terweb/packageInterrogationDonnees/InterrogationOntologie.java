@@ -85,7 +85,7 @@ public class InterrogationOntologie {
 "            ORDER BY ASC(?relation_naire) ASC(?parametre)";
 
         
-        /************************LOCAL MODE ***********************************/
+        /************************LOCAL MODE ***********************************
         
         Path input = Paths.get(path+"DonneesLocales/Ontologie/", "biorefinery.owl");
         Model model = ModelFactory.createDefaultModel() ; 
@@ -97,15 +97,15 @@ public class InterrogationOntologie {
         
         QueryExecution qe = QueryExecutionFactory.create(query, model); 
          
-        /************************************************************************/
+        ***********************************************************************/
 
-        /**********************SPARQL ENDPOINT MODE*****************
+        //**********************SPARQL ENDPOINT MODE*****************
         
         Query query = QueryFactory.create(comNameQuery);  
         
         QueryExecution qe = QueryExecutionFactory.sparqlService(sparqlEndpoint,query);
         
-        ************************************************************************/
+        //************************************************************************/
 
         try {
                 ResultSet rs = qe.execSelect();
