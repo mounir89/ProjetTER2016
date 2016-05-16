@@ -17,8 +17,10 @@ import com.terweb.packageExceptions.*;
 
 /**
  *
- * @author proprietaire
+ * Classe qui regroupe les méthodes nécessaires à l'interrogations de données pour amorcer la phase du calcul.
+ *
  */
+
 public class Interrogation {
     
     
@@ -39,10 +41,14 @@ public class Interrogation {
     private static String vPathRacine; //Chemin du dossier courant sur le serveur d'hébergement
     
     private static File vFichierCalcul; 
-    
-    
-                   
-    //LoggerException.getLoggerException().log(Level.WARNING,null,ex);
+
+    /**
+ 	 * Fonction appelée pour exécuter la suite des traitements nécessaires à la préparation des données.
+ 	 * 
+ 	 * @return Obj:Object_RapportCalculMatrice. 
+ 	 * @throws Exception_AbsenceDocument, Exception_AbsenceExperienceBiomass, Exception_FichierCalcule, Exception_ParseException, IOException, Exception_BDDException, SQLException, Exception_SparqlConnexion, Exception_MatriceCalculVide
+ 	 *  
+ 	 */
     
     public static Object_RapportCalculMatrice initMatriceCalcul(String v_PathFile, String v_biomass, HashMap<String, ArrayList<String>> v_TopicOperations, HashMap<String, ArrayList<String>> v_RelationParametres ) throws Exception_AbsenceDocument, Exception_AbsenceExperienceBiomass, Exception_FichierCalcule, Exception_ParseException, IOException, Exception_BDDException, SQLException, Exception_SparqlConnexion, Exception_MatriceCalculVide
     {
@@ -50,8 +56,7 @@ public class Interrogation {
          
         if((v_biomass!=null) && (v_TopicOperations.size()>0) && (v_RelationParametres.size()>0))
         {
-
-        	vPathFile=v_PathFile; vBiomass=v_biomass; vTopicOperations=v_TopicOperations; vRelationParametres=v_RelationParametres;
+            vPathFile=v_PathFile; vBiomass=v_biomass; vTopicOperations=v_TopicOperations; vRelationParametres=v_RelationParametres;
 
             vPathRacine=v_PathFile.substring(0, v_PathFile.indexOf("DirectoryUsers"));
             
@@ -67,26 +72,24 @@ public class Interrogation {
                     vTopicDocs.put(topic, listDoc);
                 }
             }
-            
+
             /*Pour chaque Topic, pour chaque document vÃ©rifier si il existe une expÃ©rience sur ladite biomass*/
             /*Si !(vTopicDocs.size() > 0) ---> Exception_AbsenceDocument()*/
             /*Resultat : vDocExp*/
 
             recupererExperienceBiomass();
-            
+
             /*Construire la matrice de calcul et renvoyer les messages d'absence de valeurs*/
             /*Si !(vDocExp.size() > 0) --> Exception_AbsenceExperienceBiomass*/
             /*Resultat : vVecteurCalculGlobal*/
 
             rapport.setMessage(construireMatriceCalcul());
-            
-            
 
             /*Transformer la matrice de calcul en fichier de sortie CSV exploitable avec R*/
 
             if(vVecteurCalculGlobal.size()>0)
-            {            	
-            	transformerMatriceCSV();
+            {
+                transformerMatriceCSV();
             }
             else
             {
@@ -109,9 +112,15 @@ public class Interrogation {
     }
     
     
+    /**
+  	 * Frocédure qui construit la liste des triplets : <Topic:Document:Expérience> pour une biomasse donnée.
+  	 * 
+  	 * @throws Exception_AbsenceDocument, IOException, Exception_SparqlConnexion
+  	 */
+    
     private static void recupererExperienceBiomass() throws Exception_AbsenceDocument, IOException, Exception_SparqlConnexion
     {
-    	
+         
        if(vTopicDocs.size() > 0 )
        {
            for (String topic : vTopicDocs.keySet())
@@ -120,8 +129,7 @@ public class Interrogation {
                
                for(String idDoc : listDoc)
                {
-            	   
-            	   ArrayList<Object_TIEG> listeObj = InterrogationDataRDF.getDocumentExperience(vPathRacine,vBiomass,topic,idDoc);
+                   ArrayList<Object_TIEG> listeObj = InterrogationDataRDF.getDocumentExperience(vPathRacine,vBiomass,topic,idDoc);
                    
                    if(listeObj!=null)
                    {
@@ -133,14 +141,19 @@ public class Interrogation {
        }
        else
        {
-         
-           //LoggerException.getLoggerException().log(Level.WARNING,null, new Exception_ParseException());
 
            throw new Exception_AbsenceDocument();
 
        }
        
     }
+    
+    /**
+  	 * Fonction qui construit la matrice de calcule globale (vVecteurCalculGlobal).
+  	 * 
+  	 * @return Liste des messages d'erreurs.
+  	 * @throws Exception_AbsenceExperienceBiomass, Exception_ParseException,IOException, Exception_SparqlConnexion
+  	 */
     
     private static ArrayList<String> construireMatriceCalcul() throws Exception_AbsenceExperienceBiomass, Exception_ParseException,IOException, Exception_SparqlConnexion {
 
@@ -187,6 +200,13 @@ public class Interrogation {
       
     }
     
+    /**
+  	 * Fonction qui crée un fichier csv à partir de la matrice de calcul globale (vVecteurCalculGlobal).
+  	 * Le fichier csv sera placé sur le dossier de l'utilisateur courant.
+  	 * 
+  	 * @throws Exception_FichierCalcule, IOException
+  	 */
+    
     private static void transformerMatriceCSV() throws Exception_FichierCalcule, IOException
     {
 
@@ -213,7 +233,7 @@ public class Interrogation {
                                               "RELIABILITY_MIN","RELIABILITY_MAX"});
 
                     for( Object_VecteurCalcul vector : vVecteurCalculGlobal){
-                    	
+
                         data.add(new String[]{vector.getaTopic(),vector.getaIdDoc(),vector.getaExpN(),
                                               Double.toString(vector.getaBiomassQty()),
                                               Double.toString(AdaptationDonnees.doubleFractionPrecision(vector.getaSomme(),4)),

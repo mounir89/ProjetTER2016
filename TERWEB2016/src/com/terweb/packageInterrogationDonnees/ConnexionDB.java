@@ -13,11 +13,20 @@ import com.terweb.packageExceptions.Exception_BDDException;
 
 /**
  *
- * @author proprietaire
+ * Classe qui assure la connexion avec la base de données PostgreSQL.
+ * 
  */
+
 public class ConnexionDB {
     
     private static Connection connection = null;
+    
+    /**
+ 	 * Fonction qui crée une connexion à la base de données PostgreSQL.
+ 	 * 
+ 	 * @return Obj:Connection. 
+ 	 *  
+ 	 */
     
     static Connection getConnection() throws Exception_BDDException
     {

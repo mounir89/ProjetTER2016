@@ -15,13 +15,25 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import com.terweb.packageExceptions.Exception_BDDException;
+import com.terweb.packageExceptions.Exception_FichierCalcule;
 
 /**
  *
- * @author proprietaire
+ * Classe qui comporte les fonctions d'interogation de la base de données PostgreSQL. 
+ *
  */
+
 public class InterrogationBDD {
     
+	/**
+	* Fonction qui récupère pour un topic la liste des documents scientifiques qu'il regroupe.
+	* 
+	* @param topic : Identification du topic.
+	* @return Obj:ArrayList
+	* @throws Exception_BDDException, SQLException
+	* 
+	*/
+	
     static ArrayList<String> getTopicDocument(String topic) throws Exception_BDDException, SQLException
     {
 
@@ -32,7 +44,7 @@ public class InterrogationBDD {
 
         conn = ConnexionDB.getConnection();
   
-        //CrÃ©ation d'un objet PrepareStatement
+        //Création d'un objet PrepareStatement
         pst = conn.prepareStatement("select d.id_documents"
                       + " from public.documents d, public.topics t, public.ontology o"
                       + " where o.id_ontology=t.id_ontology"
@@ -40,10 +52,10 @@ public class InterrogationBDD {
                       + " and o.name='BIOREFINERY'"
                       + " and t.name=?"); 
                     
-        //Edition du paramÃ¨tre topic
+        //Edition du paramètre topic
         pst.setString(1,topic);
                     
-        //L'objet ResultSet contient le rÃ©sultat de la requÃªte SQL
+        //L'objet ResultSet contient le résultat de la requète SQL
         result = pst.executeQuery();      
                 
         while(result.next()){
@@ -65,7 +77,14 @@ public class InterrogationBDD {
         return null;
     }
 
-
+    /**
+	* Fonction qui récupère la liste des topics définis en tremes d'opérations unitaires.
+	* 
+	* @return Obj:HashMap
+	* @throws IOException, SQLException, Exception_BDDException
+	* 
+	*/
+    
     static HashMap<String,ArrayList<String>> getTopicOperation() throws IOException, SQLException, Exception_BDDException
     {
 
@@ -85,10 +104,10 @@ public class InterrogationBDD {
  
         conn = ConnexionDB.getConnection();
          
-        //CrÃ©ation d'un objet Statement
+        //Création d'un objet Statement
         st=conn.createStatement();
 
-        //L'objet ResultSet contient le rÃ©sultat de la requÃªte SQL
+        //L'objet ResultSet contient le résultat de la requète SQL
         result = st.executeQuery(requete);
                     
         while(result.next())
