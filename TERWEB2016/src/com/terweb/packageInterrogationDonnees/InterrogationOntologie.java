@@ -23,9 +23,11 @@ import java.util.HashMap;
 import com.terweb.packageExceptions.Exception_SparqlConnexion;
 
 /**
- *
- * @author proprietaire
- */
+*
+* Classe qui comporte les fonctions d'interogation de l'ontologie. 
+*
+*/
+
 public class InterrogationOntologie {
     
     static String sparqlEndpoint = "http://pfl.grignon.inra.fr:3030/ontology/query";
@@ -53,6 +55,16 @@ public class InterrogationOntologie {
 			   ?value rdfs:subClassOf* domain:matter_quantity}
             ORDER BY ASC(?relation_naire) ASC(?parametre) 
     */
+    
+    /**
+  	* Fonction qui récupère la liste des relations n-aires définies en termes de quantités de matières.
+  	* 
+  	* @param path : Chemin des données en cas d'une interrogation en local.
+  	* @return Obj:HashMap
+  	* @throws IOException, Exception_SparqlConnexion
+  	* 
+  	*/
+    
     static HashMap<String,ArrayList<String>> getRelationParameters(String path) throws IOException, Exception_SparqlConnexion
     {
             String relation;
@@ -85,7 +97,7 @@ public class InterrogationOntologie {
 "            ORDER BY ASC(?relation_naire) ASC(?parametre)";
 
         
-        /************************LOCAL MODE ***********************************
+        /************************LOCAL MODE ***********************************/
         
         Path input = Paths.get(path+"DonneesLocales/Ontologie/", "biorefinery.owl");
         Model model = ModelFactory.createDefaultModel() ; 
@@ -97,15 +109,15 @@ public class InterrogationOntologie {
         
         QueryExecution qe = QueryExecutionFactory.create(query, model); 
          
-        ***********************************************************************/
+        /************************************************************************/
 
-        //**********************SPARQL ENDPOINT MODE*****************
+        /**********************SPARQL ENDPOINT MODE*****************
         
         Query query = QueryFactory.create(comNameQuery);  
         
         QueryExecution qe = QueryExecutionFactory.sparqlService(sparqlEndpoint,query);
         
-        //************************************************************************/
+        ************************************************************************/
 
         try {
                 ResultSet rs = qe.execSelect();
