@@ -11,13 +11,13 @@ package com.terweb.packageExceptions;
 public class Exception_FichierCalcule extends Exception{
 
     public Exception_FichierCalcule() {
-        super("Une erreur de crÃ©ation du fichier de calcul. L'exÃ©cution du programme a Ã©tÃ© interrompue.");
+        super("Une erreur de création du fichier de calcul. L'exéution du programme a été interrompue.");
     }
     
     @Override
     public String getMessage()
     {
-        return "Une erreur de crÃ©ation du fichier de calcul. L'exÃ©cution du programme a Ã©tÃ© interrompue.";
+        return "Une erreur de création du fichier de calcul. L'exécution du programme a été interrompue.";
     }
     
 }

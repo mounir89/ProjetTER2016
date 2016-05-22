@@ -149,7 +149,7 @@ public class Object_TIEG {
     /**
     *
     * Procédure qui modifie la valeur du Glucose Rate Maximum.
-    * @param aGrMin : Nouvelle valeur du Glucose Rate Maximum.
+    * @param aGrMax : Nouvelle valeur du Glucose Rate Maximum.
     * 
     */
     

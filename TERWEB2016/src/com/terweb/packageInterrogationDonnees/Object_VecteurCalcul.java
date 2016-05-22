@@ -176,7 +176,7 @@ public class Object_VecteurCalcul {
     /**
     *
     * Procédure qui modifie le numéro de l'expérience.
-    * @param aIdDoc : Nouveau numéro d'expérience.
+    * @param aExpN : Nouveau numéro d'expérience.
     * 
     */
     
@@ -263,7 +263,7 @@ public class Object_VecteurCalcul {
     /**
     *
     * Procédure qui modifie la valeur du Glucose Rate Maximum.
-    * @param aGrMin : Nouvelle valeur du Glucose Rate Maximum.
+    * @param aGrMax : Nouvelle valeur du Glucose Rate Maximum.
     * 
     */
     

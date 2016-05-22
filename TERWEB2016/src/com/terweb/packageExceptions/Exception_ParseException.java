@@ -11,13 +11,13 @@ package com.terweb.packageExceptions;
 public class Exception_ParseException extends Exception{
     
     public Exception_ParseException() {
-        super("Une erreur de conversion de type. L'exÃ©cution du programme a Ã©tÃ© interrompue.");
+        super("Une erreur de conversion de type. L'exécution du programme a été interrompue.");
     }
     
     @Override
     public String getMessage()
     {
-        return "Une erreur de conversion de type. L'exÃ©cution du programme a Ã©tÃ© interrompue.";
+        return "Une erreur de conversion de type. L'exécution du programme a été interrompue.";
     }
 
 }

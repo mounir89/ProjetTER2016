@@ -11,13 +11,13 @@ package com.terweb.packageExceptions;
 public class Exception_MatriceCalculVide extends Exception{
     
     public Exception_MatriceCalculVide() {
-        super("La matrice de calcul est vide. L'exÃ©cution du programme a Ã©tÃ© interrompue.");
+        super("La matrice de calcul est vide. L'exécution du programme a été interrompue.");
     }
     
     @Override
     public String getMessage()
     {
-        return "La matrice de calcul est vide. L'exÃ©cution du programme a Ã©tÃ© interrompue.";
+        return "La matrice de calcul est vide. L'exécution du programme a été interrompue.";
     }
     
 }

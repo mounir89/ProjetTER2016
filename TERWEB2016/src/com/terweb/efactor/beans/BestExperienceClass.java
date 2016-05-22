@@ -24,8 +24,8 @@ public class BestExperienceClass extends ClassAbstractCalculEfactor {
 	
 	/**
 	 * Constructeur
-	 * @param pathCommun
-	 * @param userCurrentID
+	 * @param pathCommun Chemin du dossier de l'utilisateur courant 
+	 * @param userCurrentID Identifiant de l'utilisateur courant
 	 */
 	public BestExperienceClass(String pathCommun,String userCurrentID){
 		this.pathCh = pathCommun;
@@ -130,9 +130,9 @@ public class BestExperienceClass extends ClassAbstractCalculEfactor {
      }
    /**
     * Calcul de l'E-factor pour la meilleure expérience du document
-    * @param pathFile
-    * @return boolean
-    * @throws ClassCalculException
+    * @param pathFile Chemin du fichier precalcul contenant les valeurs à 95% de confiance Glucose Yield et Rate
+    * @return boolean  Retourner true si le calcul s'est terminé sinon false
+    * @throws ClassCalculException Déclencher une erreur si le calcul est interrompu
     */
 	public boolean CalculEfactor(String pathFile) throws ClassCalculException{
 		 

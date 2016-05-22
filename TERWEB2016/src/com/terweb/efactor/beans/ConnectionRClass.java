@@ -6,7 +6,7 @@ public class ConnectionRClass {
        
 	    private static Rengine connection;
 	    /**
-	     * Constructeur privé pour empécher l'instantiation 
+	     * 
 	     * de la classe ConnectionClass
 	     */
 	    private ConnectionRClass() {

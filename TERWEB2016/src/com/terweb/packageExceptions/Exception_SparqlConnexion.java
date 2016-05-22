@@ -11,7 +11,7 @@ package com.terweb.packageExceptions;
 public class Exception_SparqlConnexion extends Exception{
     
     public Exception_SparqlConnexion() {
-        super("Une erreur de connexion avec le sparql endpoint. L'exÃ©cution du programme a Ã©tÃ© interrompue.");
+        super("Une erreur de connexion avec le sparql endpoint. L'exécution du programme a été interrompue.");
     }
 
     public Exception_SparqlConnexion(Throwable cause) {
@@ -21,7 +21,7 @@ public class Exception_SparqlConnexion extends Exception{
     @Override
     public String getMessage()
     {
-        return "Une erreur de connexion avec le sparql endpoint. L'exÃ©cution du programme a Ã©tÃ© interrompue.";
+        return "Une erreur de connexion avec le sparql endpoint. L'exécution du programme a été interrompue.";
     }
 
 }
