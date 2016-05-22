@@ -3,14 +3,21 @@ package com.terweb.packageInterrogationDonnees;
 import com.terweb.packageExceptions.Exception_SparqlConnexion;
 
 
+    /**
+   	* 
+   	* Classe qui regroupe des m√©thodes utilis√©es pour r√©cup√©rer l'URI d'une table : Process Description sur @WEB
+   	* √† partir de l'identifiant du document scientifique correspendant.
+   	* 
+   	* 
+   	*/
 
 public class LienDocument {
 
     /**
    	* 
-   	* Fonction qui retourne l'URI de la table annotÈe (Process Description) d'un document donnÈ.
+   	* Fonction qui retourne l'URI de la table annot√©e (Process Description) d'un document donn√©.
    	* 
-   	* @param path : Chemin des donnÈes en cas d'une interrogation en local.
+   	* @param path : Chemin des donn√©es en cas d'une interrogation en local.
    	* @param idDocument : Identifiant du document.
    	* @return Obj:String
    	* @throws Exception_SparqlConnexion
@@ -28,9 +35,9 @@ public class LienDocument {
     
     /**
    	* 
-   	* Fonction qui gÈnËre l'URI de la table annotÈe (Process Description) d'un document donnÈ.
+   	* Fonction qui g√©n√®re l'URI de la table annot√©e (Process Description) d'un document donn√©.
    	* 
-   	* @param path : Chemin des donnÈes en cas d'une interrogation en local.
+   	* @param path : Chemin des donn√©es en cas d'une interrogation en local.
    	* @param idDocument : Identifiant de la table.
    	* @return Obj:String
    	* 
