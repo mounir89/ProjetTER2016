@@ -20,8 +20,8 @@ public class AllVarTopicClass extends ClassAbstractCalculEfactor {
 	
 	/**
 	 * Constructeur
-	 * @param pathCommun
-	 * @param userCurrentID
+	 * @param pathCommun Chemin du dossier utilisateur courant
+	 * @param userCurrentID Identifiant de l'utilisateur courant
 	 */
 	public AllVarTopicClass(String pathCommun,String userCurrentID){
 		this.pathCh = pathCommun;

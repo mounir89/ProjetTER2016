@@ -81,7 +81,7 @@ public class Object_RapportCalculMatrice {
     /**
     *
     * Procédure qui modifie la liste des mesages d'erreurs.
-    * @param fichierCalcule : Nouvelle liste des messages d'erreurs.
+    * @param message : Nouvelle liste des messages d'erreurs.
     * 
     */
     

@@ -34,7 +34,6 @@ public class UpdateBDD {
     /**
      * Procédure qui lance la mise à jour de la base de données à travers
      * un ensemble de traitements.
-     * 
      * @throws Exception_BDDException, SQLException, Exception_SparqlConnexion
      */
     

@@ -44,7 +44,6 @@ public class Interrogation {
 
     /**
  	 * Fonction appelée pour exécuter la suite des traitements nécessaires à la préparation des données.
- 	 * 
  	 * @return Obj:Object_RapportCalculMatrice. 
  	 * @throws Exception_AbsenceDocument, Exception_AbsenceExperienceBiomass, Exception_FichierCalcule, Exception_ParseException, IOException, Exception_BDDException, SQLException, Exception_SparqlConnexion, Exception_MatriceCalculVide
  	 *  

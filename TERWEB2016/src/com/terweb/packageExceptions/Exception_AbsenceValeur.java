@@ -11,12 +11,12 @@ package com.terweb.packageExceptions;
 public class Exception_AbsenceValeur extends Exception{
 
     public Exception_AbsenceValeur(String message) {
-        super("Des valeurs nÃ©cessaires au calcul sont indÃ©finies ("+message+"). L'exÃ©cution du programme a Ã©tÃ© interrompue.");
+        super("Des valeurs nécessaires au calcul sont indéfinies ("+message+"). L'exécution du programme a été interrompue.");
     }
     
     @Override
     public String getMessage()
     {
-        return "Des valeurs nÃ©cessaires au calcul sont indÃ©finies. L'exÃ©cution du programme a Ã©tÃ© interrompue.";
+        return "Des valeurs nécessaires au calcul sont indéfinies. L'exécution du programme a été interrompue.";
     }
 }

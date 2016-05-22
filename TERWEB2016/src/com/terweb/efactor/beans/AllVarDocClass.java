@@ -31,8 +31,8 @@ public class AllVarDocClass extends ClassAbstractCalculEfactor{
 	
 	/**
 	 * constructeur  
-	 * @param pathCommun 
-	 * @param userCurrentID
+	 * @param pathCommun Chemin du dossier utilisateur courant
+	 * @param userCurrentID Identifiant de l'utulisateur courant
 	 */
 	public AllVarDocClass(String pathCommun,String userCurrentID){
 		this.pathCh = pathCommun;
@@ -170,9 +170,8 @@ public class AllVarDocClass extends ClassAbstractCalculEfactor{
      * Exécution des scripts R pour calculer l'E-factor 
      * à intervalle à 95 de confiance de chaque expérience
      * du document
-     * @param pathfFile
+     * @param pathfFile Chemin du fichier csv precalcul contenant valeurs à 95% de confiance de Glucose Rate et Yield
      * @throws ClassCalculException 
-     * @throws ClassNotFoundException 
      * @return Path du fichier CSV de sortie
      */
 	

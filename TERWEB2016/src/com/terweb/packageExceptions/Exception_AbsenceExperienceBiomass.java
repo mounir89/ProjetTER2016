@@ -11,12 +11,12 @@ package com.terweb.packageExceptions;
 public class Exception_AbsenceExperienceBiomass extends Exception{
 
     public Exception_AbsenceExperienceBiomass() {
-        super("Aucune expÃ©rience ne traite de la biomass sÃ©lectionnÃ©e.");
+        super("Aucune expérience ne traite de la biomass sélectionnée.");
     }
 
     @Override
     public String getMessage()
     {
-        return "Aucune expÃ©rience ne traite de la biomass sÃ©lectionnÃ©e.";
+        return "Aucune expérience ne traite de la biomass sélectionnée.";
     }
 }

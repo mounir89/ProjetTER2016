@@ -6,9 +6,9 @@ import java.util.UUID;
 public class IdentifierUserSession  {
 	
 	/**
-	 * Génération d'un identifier unique
+	 * Génération d'un identifiant unique
 	 * pour chaque utilisteur de l'application
-	 * @return Identifier unique pour l'utilisateur
+	 * @return Identifiant unique pour l'utilisateur
 	 */
    public static String generateIdentifierUserSession (){
 	   
