@@ -10,7 +10,7 @@ import com.terweb.exception.ClassFileProblemException;
 
 /**
  * 
- * @author Ikbal and Mounir
+ * @author BI-G
  * @WEB PROJECT 2016 
  * v1.0
  *
@@ -18,13 +18,13 @@ import com.terweb.exception.ClassFileProblemException;
 public abstract class ClassAbstractCalculEfactor {
 	
 	/**
-	 * 
+	 * Calcul du Glucose Yield et le Glucose Rate à intervalle à 95% de confiance
 	 * @param userCurrentID String 
 	 * @return path file 
 	 * @throws IOException  
 	 */
 	public String preCalculEfactor(String userCurrentID,String pathCh) throws IOException, ClassCalculException{
-		System.out.println("appppelllllllllllllllll");
+		
 		File preCalculFile  = new File(pathCh+"DirectoryUsers/"+userCurrentID+"/preCalcul"+userCurrentID+".csv");
 		
 		if(preCalculFile.exists()){

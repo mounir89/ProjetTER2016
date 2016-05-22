@@ -32,8 +32,10 @@ public class UpdateBDD {
     static String sparqlEndpoint = "http://pfl.grignon.inra.fr:3030/annotation/query";
     
     /**
-     * ProcÃ©dure qui lance la mise Ã  jour de la base de donnÃ©es Ã  travers
+     * Procédure qui lance la mise à jour de la base de données à travers
      * un ensemble de traitements.
+     * 
+     * @throws Exception_BDDException, SQLException, Exception_SparqlConnexion
      */
     
     public static void execute() throws Exception_BDDException, SQLException, Exception_SparqlConnexion
@@ -100,8 +102,11 @@ public class UpdateBDD {
     }
     
     /**
-     * Fonction qui retourne une collection HashMap dont la clÃ© est le libellÃ© du Topic
-     * et la valeur associÃ©e est la liste des documents du topic.
+     * Fonction qui retourne une collection HashMap dont la clé est le nom du Topic
+     * et la valeur associée est la liste des documents du topic.
+     * 
+     * @return obj:HashMap
+     * @throws Exception_BDDException, SQLException
      * 
      */
     
@@ -126,7 +131,7 @@ public class UpdateBDD {
                         "and o.name='BIOREFINERY'\n" +
                         "ORDER BY (t.name,d.id_documents) ASC"; 
                     
-        //L'objet ResultSet contient le rÃ©sultat de la requÃªte SQL
+        //L'objet ResultSet contient le résultat de la requête SQL
         result = st.executeQuery(query);
                 
         while(result.next()){
@@ -155,9 +160,11 @@ public class UpdateBDD {
     }
     
     /**
-     * ProcÃ©dure qui met Ã  jour la table : public.topicoperation
-     * Les donnÃ©es Ã©tant la liste des traitements (opÃ©rations) qui figurent sur les donnÃ©es annotÃ©es.
+     * Procédure qui met à jour la table : public.topicoperation
+     * Les données étant la liste des traitements (opérations) qui figurent sur les données annotées.
      * 
+     * @param treatments : Liste des opérations unitaires.
+     * @throws Exception_BDDException, SQLException
      */
     
     private static void rebuildTableOperation(ArrayList<String> treatments) throws Exception_BDDException, SQLException
@@ -168,13 +175,13 @@ public class UpdateBDD {
 
         conn = ConnexionDB.getConnection();
   
-        //CrÃ©ation d'un objet PrepareStatement
+        //Création d'un objet PrepareStatement
         st = conn.createStatement();
         
-        //requÃªte SQL pour vider la table : public.topicoperation
+        //requête SQL pour vider la table : public.topicoperation
         st.executeUpdate("DELETE FROM public.topicoperation");
         
-        //requÃªte SQL pour vider la table : public.operations
+        //requête SQL pour vider la table : public.operations
         st.executeUpdate("DELETE FROM public.operations");
         
         
@@ -185,10 +192,10 @@ public class UpdateBDD {
         
         for(String treatment : treatments)
         {
-            //Edition du paramÃ¨tre name_en
+            //Edition du paramètre name_en
             pst.setString(1,treatment);
         
-            //ExÃ©cution de la requÃªte SQL
+            //Exécution de la requête SQL
             pst.executeUpdate();
         }
      
@@ -199,8 +206,11 @@ public class UpdateBDD {
     }
     
      /**
-     * ProcÃ©dure qui met Ã  jour la table : public.topicoperation.
-     * Les donnÃ©es Ã©tant les Topics reliÃ©s aux traitements correspondants.
+     * Procédure qui met à jour la table : public.topicoperation.
+     * Les données étant les Topics reliés aux traitements correspondants.
+     * 
+     * @param topicTreatment : Liste des topics définis en termes d'opérations unitaires.
+     * @throws Exception_BDDException, SQLException
      * 
      */
     
@@ -222,13 +232,13 @@ public class UpdateBDD {
               for(String treatment : topicTreatment.get(topic))
                 {
                      
-                    //Edition du paramÃ¨tre id_topic
+                    //Edition du paramètre id_topic
                     pst.setString(1,topic);
                     
-                    //Edition du paramÃ¨tre id_operations
+                    //Edition du paramètre id_operations
                     pst.setString(2,treatment);
                     
-                    //ExÃ©cution de la requÃªte SQL
+                    //Exécution de la requète SQL
                     pst.executeUpdate();
                 }
         }
@@ -238,8 +248,11 @@ public class UpdateBDD {
     }
     
      /**
-     * Fonction qui pour un document donnÃ©e, retourne la liste des traitements qu'il engendre.
+     * Fonction qui pour un document donnée, retourne la liste des traitements qu'il engendre.
      * 
+     * @param idDocument : Identifiant du document.
+     * @return obj:ArrayList
+     * @throws Exception_SparqlConnexion
      */
     
     private static ArrayList<String> getDocumentTreatments(String idDocument) throws Exception_SparqlConnexion
@@ -315,8 +328,10 @@ public class UpdateBDD {
     }
     
     /**
-     * Fonction qui retrourne la liste des traitements figurant sur les donnÃ©es annotÃ©es.
+     * Fonction qui retrourne la liste des traitements figurant sur les données annotées.
      * 
+     * @return obj:ArrayList
+     * @throws Exception_SparqlConnexion
      */
     
     private static ArrayList<String> getAllTreatment() throws Exception_SparqlConnexion

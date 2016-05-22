@@ -25,13 +25,23 @@ import com.terweb.packageExceptions.*;
 import com.terweb.packageLogger.LoggerException;
 
 /**
- *
- * @author proprietaire
- */
+*
+* Classe qui comporte les fonctions d'interogation des données annotées au format RDF. 
+*
+*/
 
 public class InterrogationDataRDF {
    
     static String sparqlEndpoint = "http://pfl.grignon.inra.fr:3030/annotation/query";
+    
+    /**
+	* Fonction qui récupère la liste des biomasses présentes sur les données annotées.
+	* 
+	* @param path : Chemin des données en cas d'une interrogation en local.
+	* @return Obj:ArrayList
+	* @throws Exception_SparqlConnexion, FileNotFoundException
+	* 
+	*/
     
     static ArrayList<String> getBiomass(String path) throws Exception_SparqlConnexion, FileNotFoundException
     {
@@ -132,6 +142,20 @@ public class InterrogationDataRDF {
         }
         ORDER BY ASC(?idDocument) ASC(?experience_number)
     */
+    
+    /**
+   	* Fonction qui pour un triplet <Biomasse:Topic:IdDoc> récupère la liste des triplets <Experience Number:Glucose Rate Min:Glucose Rate Max>.
+   	* Le résultat étant une liste d'objets du type : Object_TIEG.
+   	* 
+   	* @param path : Chemin des données en cas d'une interrogation en local.
+   	* @param vBiomass : Nom de la biomasse.
+   	* @param topic : Nom du topic.
+   	* @param idDoc : Identifiant du document scientifique.
+   	* @return Obj:ArrayList
+   	* @throws Exception_SparqlConnexion, FileNotFoundException
+   	* 
+   	*/
+    
     static ArrayList<Object_TIEG> getDocumentExperience(String path, String vBiomass, String topic, String idDoc) throws IOException, Exception_SparqlConnexion
     {
         ArrayList<Object_TIEG> resultat = new ArrayList<>();
@@ -275,6 +299,19 @@ public class InterrogationDataRDF {
     
     */
     
+    /**
+   	* Fonction qui retourne le vecteur de calcul correspondant à un Object_TIEG en fonction du paramétrage utilisateur. 
+   	* Le résultat étant une liste d'objets du type : Object_TIEG.
+   	* 
+   	* @param path : Chemin des données en cas d'une interrogation en local.
+   	* @param objTIEG : Support d'interrogation.
+   	* @param vTopicOperations : Sélection utilisateur des topics définis en termes d'opérations unitaires.
+   	* @param vRelationParametres : Sélection utilisateur des relations n-aires définis en termes de quantités de matières.
+   	* @return Obj:Object_RapportCalculVecteur
+   	* @throws Exception_ParseException,IOException, Exception_SparqlConnexion
+   	* 
+   	*/
+    
     static Object_RapportCalculVecteur getVecteurCalcul(String path, Object_TIEG objTIEG, HashMap<String, ArrayList<String>> vTopicOperations, HashMap<String, ArrayList<String>> vRelationParametres) throws Exception_ParseException,IOException, Exception_SparqlConnexion
     {
         String treatment,relation,biomass_quantity,biomass_unit,parametre,unit,value;
@@ -405,11 +442,11 @@ public class InterrogationDataRDF {
                 reliability_max=Double.parseDouble(solution.getLiteral("reliability_max").getLexicalForm());
                 
                 
-                /*VÃ©rifier que le traitement a Ã©tÃ© choisi dans la dÃ©finition du Topic*/
+                /*Vérifier que le traitement a été choisi dans la définition du Topic*/
                 if(vTopicOperations.get(objTIEG.getaTopic()).contains(treatment))
                 {
 
-                    /*VÃ©rifier que la relation et le paramÃ¨tre ont Ã©tÃ© choisis*/
+                    /*Vérifier que la relation et le paramètre ont été choisis*/
                     if(vRelationParametres.containsKey(relation) && vRelationParametres.get(relation).contains(parametre))
                     {
                         if(value.equals("inf")|| (gy_min!=null && gy_min.equals("inf")) || (gy_plus!=null && gy_plus.equals("inf")))
@@ -424,12 +461,8 @@ public class InterrogationDataRDF {
                                      "Glucose Yield(-)-"+gy_min+"::"+
                                      "Glucose Yield(+)-"+gy_plus;
                              
-                             LoggerException.getLoggerException().log(Level.WARNING,null, new Exception_AbsenceValeur(message));
-                             
-                             //Sortir du traitement
                              rapport.setMessage(message);
-                             
-                             return rapport;
+
                         }
                         else
                         {
@@ -443,7 +476,7 @@ public class InterrogationDataRDF {
                                 somme+=AdaptationDonnees.conversionUnite(unit, value)/AdaptationDonnees.conversionUnite(biomass_unit, biomass_quantity);
                             }
 
-                            /*Si Glucose Yield n'est pas dÃ©fini ???*/
+                            /*Si Glucose Yield n'est pas défini ???*/
 
                             if(gy_min!=null && gy_m==0)
                             {
@@ -464,7 +497,7 @@ public class InterrogationDataRDF {
                 }
             }
         } 
-        catch(IOException | Exception_ParseException e) { 
+        catch(Exception_ParseException e) { 
             
             switch (e.getClass().toString()) {
                 case "Exception_ParseException":
@@ -481,7 +514,7 @@ public class InterrogationDataRDF {
             qe.close();
         }
         
-        //mise Ã  jour du rendu du rapport
+        //mise à jour du rendu du rapport
         rapport.setVecteurCalcul(vecteur);
         
         return rapport;

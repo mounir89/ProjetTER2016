@@ -10,7 +10,8 @@ public class ClassCalculException extends Exception {
 	
 	/**
 	 * 
-	 * @param s
+	 * Méthode permettant d'affichier une erreur si 
+	 * un problème de chargement de R se produit.
 	 * @return
 	 */
 	public ClassCalculException(){

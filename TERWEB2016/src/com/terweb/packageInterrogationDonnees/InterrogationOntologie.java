@@ -23,9 +23,11 @@ import java.util.HashMap;
 import com.terweb.packageExceptions.Exception_SparqlConnexion;
 
 /**
- *
- * @author proprietaire
- */
+*
+* Classe qui comporte les fonctions d'interogation de l'ontologie. 
+*
+*/
+
 public class InterrogationOntologie {
     
     static String sparqlEndpoint = "http://pfl.grignon.inra.fr:3030/ontology/query";
@@ -53,6 +55,16 @@ public class InterrogationOntologie {
 			   ?value rdfs:subClassOf* domain:matter_quantity}
             ORDER BY ASC(?relation_naire) ASC(?parametre) 
     */
+    
+    /**
+  	* Fonction qui récupère la liste des relations n-aires définies en termes de quantités de matières.
+  	* 
+  	* @param path : Chemin des données en cas d'une interrogation en local.
+  	* @return Obj:HashMap
+  	* @throws IOException, Exception_SparqlConnexion
+  	* 
+  	*/
+    
     static HashMap<String,ArrayList<String>> getRelationParameters(String path) throws IOException, Exception_SparqlConnexion
     {
             String relation;

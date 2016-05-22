@@ -29,17 +29,18 @@
 		%>
 		
 		
-		
-		
+
 	<div class="row">
-		<div class="col-md-offset-3 col-md-6 col-md-offset-3 ">	
-	<h4 style="font-weight: bold; border-radius:3px; text-align: center; color: #000; border: 3px solid #364A81">CALCUL DES INDICATEURS STATISTIQUES</h4>	
-	<ul id="progress">
-	    <li id="etap1" class="pull-left"> <p style="color:#000; text-align: center;font-weight: bold;">1</p></li>
-	    <li id="etap2" class="col-md-0 col-md-offset-5"><p style="color:#000;text-align: center;font-weight: bold;">2</p></li>
-	    <li id="etap3" class="pull-right"><p style="color:#000;text-align: center;font-weight: bold;">3</p></li>
-	</ul>
-	</div>
+	  <div class="col-md-offset-2 col-md-8 col-md-offset-2 ">	
+		<h4 style="font-weight: bold; border-radius:3px; text-align: center; color: #000; border: 3px solid #364A81">CALCUL DES INDICATEURS STATISTIQUES</h4>	
+		
+		<ul id="progress">
+		    <li id="etap1" class="pull-left"> <p style="color:#000; text-align: center;font-weight: bold;">1</p></li>
+		    
+		    <li id="etap2" class="col-md-0 col-md-offset-5"><p style="color:#000;text-align: center;font-weight: bold;">2</p></li>
+		    <li id="etap3" class="pull-right"><p style="color:#000;text-align: center;font-weight: bold;">3</p></li>
+		</ul>
+	  </div>
 	</div>	
 		
 	<section id="phase1">
@@ -57,6 +58,7 @@
 			          <option><% out.print(bio); %></option>
 			         <% } %>
 			        </select>
+			     
 	             </div>
 	          </div>
 		    </div>
@@ -203,12 +205,16 @@
 	<br>
 	<br>
 	  	<div class="row">
-		<div class="col-md-offset-2 col-md-8 col-md-offset-2 ">
+		<div class="col-md-12">
 		  <div class="panel panel-default">
 		    <div class="panel-body">
 	           <div class="col-md-12">
 		           <div id="garphic" style="border: 3px solid gray;">
 		           
+		           		<!-- Graphic  -->
+		           		
+		           		
+		             
 		           
 		           </div>
 				      
@@ -222,42 +228,217 @@
 	
 	<br>
  <script type="text/javascript">
-
+ 
+		 $('#calculincomplet').hide();
+		 $('#erreurproduite').hide();
+		 $('#waiting').hide();
+		 $('#etap1').css("background","#2196f3");
+		 $('#etap1').css("border-radius","46px");
+		 $('#phase2').hide();
+		 $('#phase3').hide();
+ 	  
       $("#submit1").click(function(){
+    	 
+    	  $('#phase2').hide();
+    	  $('#phase3').hide();
+    	  
+    	  
+    	  var messageErreursTr = null;
+	      var messageErreursT = null;
     	  var valeurs = [];
  		 
 		  $('input:checked').each(function() {
-			   if($(this).parents("div").attr('id')==$(this).val()){
+			  
+			   if(($(this).parents("div").attr('id')==$(this).val())&&($(this).parents("section").attr('id')=="phase1")){
+				  
 				   valeurs.push($(this).val());
 			   }
+			   
 		  });
 		  
-		  console.log(valeurs);
-			$('input:checked').each(function() {
-						  
+		 $('input:checked').each(function() {
+			 if($(this).parents("section").attr('id')=="phase1"){
+				       var bool = false;	
+				       var boolc = false;
+				       
+				     
 						  for(var i=0;i<valeurs.length;i++){
 							  
-							  if(($(this).parent().attr('id')== valeurs[i])&&($(this).val()!=valeurs[i])){
-								 
-								if($(this).parents("section").attr('id')=="phase1"){
-									if(topics[$(this).parent().attr('id')]==null){
-										tempt = [];
-									}
-									tempt.push($(this).val());
-									topics[valeurs[i]]=tempt;
+							  if(($(this).parent().attr('id')== valeurs[i])&& ($(this).val()!=valeurs[i])&&($(this).parents("section").attr('id')=="phase1")){
+								    
+								    messageErreursTr =null;
 									
-								}else if($(this).parents("section").attr('id')=="phase2"){
-									if(relations[$(this).parent().attr('id')]==null){
-										tempr = [];
-									}
-									tempr.push($(this).val());
-									relations[valeurs[i]]=tempr;
-								}
+									messageErreursT =null;
+									
+									
+									boolc = true;
+									bool = true;
+								    
+							     
 							  }
+							  
+							  
+							  if(($(this).val() == valeurs[i])){
+								  
+							
+								  if(messageErreursT ==null){
+									
+									  if((messageErreursTr == null)&&(boolc == false)){
+									  
+										messageErreursT="selection relation de topic";
+										
+										bool = true;	
+								  }
+								  }else if(messageErreursT != null){
+									  i=valeurs.length;
+									  messageErreursT="selection relation de topic";
+									  bool = true;
+									  return false;
+									  
+								  }
+						      }
+							  
+							  	  
 						  }
-						   
+						  
+						  if(bool == false){
+							  if(messageErreursT == null){
+								  
+								       messageErreursTr="Veuillez sélectionner topic";
+								       return false;
+							}  
+						  }
+		 }   
 					  });
+		  if((messageErreursT == null)&&(messageErreursTr == null)){
+			  
+			  if(valeurs.length != 0){
+				  
+				  $('#etap2').css("background","#2196f3");
+			      $('#etap2').css("border-radius","46px");
+				  $('#phase1').hide();
+				  $('#phase2').show();
+			  
+			  }
+			
+		  }	else if(messageErreursTr != null){
+			  console.log("erreur message T relation");
+		  }	else if(messageErreursT != null){
+			  console.log("erreur message T ");
+		  }	
+	  
+			
       });
+      
+      $("#submit2").click(function(){
+     	 
+    	  $('#phase1').hide();
+    	  $('#phase3').hide();
+    	  
+    	  
+    	  var messageErreursTr = null;
+	      var messageErreursT = null;
+    	  var valeurs = [];
+ 		 
+		  $('input:checked').each(function() {
+			  
+			   if(($(this).parents("div").attr('id')==$(this).val())&&($(this).parents("section").attr('id')=="phase2")){
+				  
+				   valeurs.push($(this).val());
+			   }
+			   
+		  });
+		  
+		 $('input:checked').each(function() {
+			 
+				if($(this).parents("section").attr('id')=="phase2"){
+					
+				       var bool = false;	
+				       var boolc = false;
+				       
+				     
+						  for(var i=0;i<valeurs.length;i++){
+							  
+							  
+							  
+							  if(($(this).parent().attr('id')== valeurs[i])&& ($(this).val()!=valeurs[i])&&($(this).parents("section").attr('id')=="phase2")){
+								    
+								    messageErreursTr =null;
+									
+									messageErreursT =null;
+									
+									
+									boolc = true;
+									bool = true;
+								    
+							     
+							  }
+							  
+							  
+							  if(($(this).val() == valeurs[i])){
+								  
+									
+
+								  if(messageErreursT ==null){
+									
+									  if((messageErreursTr == null)&&(boolc == false)){
+										
+										
+
+										messageErreursT="selection relation de PP";
+										
+										bool = true;	
+								  }
+								  }else if(messageErreursT != null){
+									  i=valeurs.length;
+									  messageErreursT="selection relation de PP";
+									  bool = true;
+										
+
+									  return false;
+									  
+								  }
+						      }
+							  
+							  	  
+						  }
+						  
+						  if(bool == false){
+							  if(messageErreursT == null){
+									
+
+								       messageErreursTr="Veuillez sélectionner PP";
+								       return false;
+							}  
+						  }
+		         }   
+					  });
+		 
+		  if((messageErreursT == null)&&(messageErreursTr == null)){
+			  if(valeurs.length != 0){
+				  $('#etap3').css("background","#2196f3");
+			      $('#etap3').css("border-radius","46px");
+			      
+				  $('#phase1').hide();
+				  $('#phase2').hide();
+				  
+				  $('#phase3').show();
+			  }
+			
+		  }	else if(messageErreursTr != null){
+			  console.log("erreur message T relation");
+		  }	else if(messageErreursT != null){
+			  console.log("erreur message T ");
+		  }	
+	  
+			
+      });
+      
+      
+      
+      
+      
+      
 	  function envoieDonnees(){
 		  
 		  $('#submit3').prop('disabled', true);
@@ -321,57 +502,57 @@
 		 
 		        success: function (data) {
 		        	
-		        	console.log("data est "+data);
 		        	
-		        	if(data=="Success"){
+		        	 $.each(data, function (key, value) {
 		        		
-		        		   $('#submit3').prop('disabled', false);
-		        		   $('#submitp3').prop('disabled', false);
-		        		   $('#waiting').hide();	
-		        		  
-		        	}else if(data=="Failed"){
-		        		   console.log("mounir is  "+data);
-		        		   $('#erreurproduite').show();
-		        		   $('#submit3').prop('disabled', false);
-			        	   $('#submitp3').prop('disabled', false);
-			        	   $('#waiting').hide();
-		  
-		        	}else{
-		        		   console.log("data is  "+data);
-		        		   $('#calculincomplet').show();
-		        		   var p_result = $("#result");
-		        		   
-		        		   $.each(data, function (key, value) {
-		        			   
-		        			    var span = $("<span style=\"color:#000000 ; font-size:14px\" />");
-			                        span.text(value);
-			                        p_result.append(span);
-			                        p_result.append("<br>");
-			               });
-		        		    
-		        		   
-		        		   
 		        		 
-		        		   $('#submit3').prop('disabled', false);
-		        		   $('#submitp3').prop('disabled', false);
-		        		   $('#waiting').hide();
-	  
-		        	}
+		        		 if(key==="Success"){
+				        	  
+			        		   $('#submit3').prop('disabled', false);
+			        		   $('#submitp3').prop('disabled', false);
+			        		   $('#waiting').hide();	
+			        		   console.log("key "+key);
+			        		   console.log("value "+value);
+				               showgraphVisualisation(value);
+				             
+			        		  
+			        	}
+		        		 
+		        		 if(key==="Failed"){
+			        		   
+			        		   $('#erreurproduite').show();
+			        		   $('#submit3').prop('disabled', false);
+				        	   $('#submitp3').prop('disabled', false);
+				        	   $('#waiting').hide();
+			  
+			        	 }
+		        		 if((key !="Failed")||(key !="Success")){
+		        		  
+			        		   
+			        		   $('#calculincomplet').show();
+			        		   var p_result = $("#result");
+			        		   var span = $("<span style=\"color:#000000 ; font-size:14px\" />");
+				                        span.text(value);
+				                        p_result.append(span);
+				                        p_result.append("<br>");
+				               $('#submit3').prop('disabled', false);
+			        		   $('#submitp3').prop('disabled', false);
+			        		   $('#waiting').hide();
+		  
+			        	}
+		        	 });
+		        	
+		        	
 		        }
 		  });
 	
 		}
 	   
-	   $('#calculincomplet').hide();
-       $('#erreurproduite').hide();
-	   $('#waiting').hide();
-	   $('#etap1').css("background","#2196f3");
-	   $('#etap1').css("border-radius","46px");
-       $('#phase2').hide();
-       $('#phase3').hide();
+	   
        
 	   jQuery(function ($) {
-		   $('#submit1').click(function () {
+		 
+		   /* $('#submit1').click(function () {
 			   
 			   $('#phase1').hide();
 		       $('#phase3').hide();
@@ -389,7 +570,8 @@
 		       $('#etap3').css("border-radius","46px");
 		      
 		       
-		   });
+		   });*/
+		   
 		   $('#submitp3').click(function () {
 			  
 			   $('#phase1').hide();

@@ -30,8 +30,8 @@ public class AllVarDocClass extends ClassAbstractCalculEfactor{
 
 	
 	/**
-	 * 
-	 * @param pathCommun
+	 * constructeur  
+	 * @param pathCommun 
 	 * @param userCurrentID
 	 */
 	public AllVarDocClass(String pathCommun,String userCurrentID){
@@ -40,6 +40,10 @@ public class AllVarDocClass extends ClassAbstractCalculEfactor{
 	}
 
 	@Override
+	/**
+	 * Calcul de l'E-factor All  pour toutes les variations du document
+	 * @return Path du fichier CSV de sortie
+	 */
 	public String allVarDocEfactor() throws ClassCalculException, ClassFileProblemException{
 		
 		String sfile = pathCh+"DirectoryUsers/"+userCurrentID+"/fileAllVarDocResultGraphic"+userCurrentID+".csv";
@@ -163,10 +167,13 @@ public class AllVarDocClass extends ClassAbstractCalculEfactor{
 	}
 	
     /**
-     * 
+     * Exécution des scripts R pour calculer l'E-factor 
+     * à intervalle à 95 de confiance de chaque expérience
+     * du document
      * @param pathfFile
      * @throws ClassCalculException 
      * @throws ClassNotFoundException 
+     * @return Path du fichier CSV de sortie
      */
 	
 	public String CalculEfactorAll(String pathfFile) throws ClassCalculException {
@@ -192,7 +199,7 @@ public class AllVarDocClass extends ClassAbstractCalculEfactor{
 			       re.eval(String.format("filecsv <- '%s'",pathfFile));
 			       
 			       re.eval("s<-CalculInterEfactor()");
-			       
+			      
 			       return fileOutResult;
 		       }
 			  
