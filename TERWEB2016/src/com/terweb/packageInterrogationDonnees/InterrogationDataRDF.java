@@ -519,4 +519,84 @@ public class InterrogationDataRDF {
         
         return rapport;
     }
+    
+    
+    /**
+   	* 
+   	* Fonction qui retourne le numéro de la table "Process Description d'un document donnée.
+   	* 
+   	* @param path : Chemin des données en cas d'une interrogation en local.
+   	* @param idDocument : Identifiant du document.
+   	* @return Obj:String
+   	* @throws Exception_SparqlConnexion
+   	* 
+   	*/
+    
+    static String getTableID(String path, String idDocument) throws Exception_SparqlConnexion
+    {
+        String resultat = null;
+        
+        String comNameQuery=
+                "prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n" +
+            "    prefix owl: <http://www.w3.org/2002/07/owl#>\n" +
+            "    PREFIX onto: <http://opendata.inra.fr/resources/atWeb/annotation/>\n" +
+            "    PREFIX domain: <http://opendata.inra.fr/resources/BIORAF#>\n" +
+            "    PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n" +
+            "    PREFIX dc: <http://purl.org/dc/elements/1.1/>\n" +
+            "\n" +
+            "                SELECT ?tableID\n" +
+            "                WHERE {\n" +
+            "                       ?document rdf:type onto:Document.\n" +
+            "  			    ?document onto:hasForID ?idDocument.\n" +
+            "                       FILTER(str(?idDocument)=\""+idDocument+"\")\n" +
+            "                  	    ?document onto:hasTable ?table.\n" +
+            "                       ?table dc:title ?tableTitle.\n" +
+            "        		    FILTER regex(?tableTitle, \"Process\", \"i\" )\n" +
+            "  			    ?table onto:hasForID ?tableID.\n" +
+            "                }";
+        
+        /************************LOCAL MODE ***********************************
+                 
+        Path input = Paths.get(path+"DonneesLocales/RDF/", "annotations_atweb.ttl");
+        
+        Model model = ModelFactory.createDefaultModel() ; 
+        
+        model.read(input.toUri().toString());
+         
+        Query query = QueryFactory.create(comNameQuery);  
+        
+        QueryExecution qe = QueryExecutionFactory.create(query, model);
+         
+        ************************************************************************/
+
+        /**********************SPARQL ENDPOINT MODE*****************/
+        
+        Query query = QueryFactory.create(comNameQuery);  
+        
+        QueryExecution qe = QueryExecutionFactory.sparqlService(sparqlEndpoint,query);
+        
+        /************************************************************************/
+
+        try {
+                ResultSet rs = qe.execSelect();
+                
+                while ( rs.hasNext() ) {
+                
+                QuerySolution solution=rs.next();
+                
+                resultat=solution.getLiteral("tableID").getLexicalForm(); 
+            }
+        } 
+        catch(Exception e){ 
+            
+           throw new Exception_SparqlConnexion(e);
+    
+        }
+        finally {
+            qe.close();
+        }
+        
+        return resultat;
+
+    }
 }
